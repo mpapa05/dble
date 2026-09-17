@@ -1,0 +1,48 @@
+<!-- A kör alakú kártya, amiben az emojik laknak -->
+<div class="dobble-card">
+  <div class="card-area">
+    <div
+      *ngFor="let item of placedItems"
+      [style.top]="item.top"
+      [style.left]="item.left"
+      [style.transform]="item.transform"
+      [class.highlighted]="highlightedItems.includes(item.text)"
+      class="dobble-item"
+    >
+      <img
+        *ngIf="item.isImage"
+        [src]="item.text"
+        alt="symbol"
+        class="symbol-img"
+      />
+      <span *ngIf="!item.isImage">{{ item.text }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- FIX: A gomb teljesen kikerült a körből, így nincs többé takarásban -->
+<div
+  style="text-align: center; margin-top: 12px; position: relative; z-index: 30"
+  class="non-printable"
+>
+  <button
+    type="button"
+    (click)="shuffle(); $event.stopPropagation()"
+    style="
+      background: #f1f5f9;
+      border: 1px solid #cbd5e0;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: bold;
+      color: #475569;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    "
+  >
+    🔀 Keverés
+  </button>
+</div>

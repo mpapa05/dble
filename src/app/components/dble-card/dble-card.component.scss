@@ -1,0 +1,85 @@
+:host {
+  display: inline-block;
+}
+
+/* A kerek kártya alapstílusa */
+.dobble-card {
+  width: 160px;
+  height: 160px;
+  border: 3px solid #22c55e; /* Szép zöld keret */
+  border-radius: 50%;
+  background-color: #ffffff;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+/* Konténer, ami kitölti a kártyát */
+.card-area {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Egyedi szimbólum wrapper (Ez kerül a kiszámolt koordinátára) */
+.dobble-item {
+  position: absolute;
+  font-size: 26px; /* Alap emoji méret */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  transition:
+    transform 0.2s ease-out,
+    filter 0.2s;
+}
+
+/* Kép formázása */
+.symbol-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* Ha az ellenőrző felvillantja ezt az emojit */
+.highlighted {
+  filter: drop-shadow(0 0 8px rgba(79, 70, 229, 0.8));
+  animation: pulse 1.5s infinite ease-in-out;
+  z-index: 10;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1.4);
+  }
+  50% {
+    transform: scale(1.7);
+  }
+}
+
+/* --- NYOMTATÁSI BEÁLLÍTÁSOK (Csak papíron érvényesül) --- */
+@media print {
+  /* 1. Teljesen elrejtjük a keverés gombot és annak tárolóját a papírról */
+  .non-printable,
+  button,
+  div[style*="text-align: center"] {
+    display: none !important;
+  }
+
+  /* 2. Beállítjuk a tiszta fekete vágóélt a kártyának a tökéletes körhöz */
+  .dobble-card {
+    width: 170px !important;
+    height: 170px !important;
+    border: 2px solid #000000 !important; /* Tiszta fekete vágóél */
+    box-shadow: none !important;
+    background: white !important;
+    page-break-inside: avoid;
+  }
+}

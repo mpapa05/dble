@@ -1,0 +1,137 @@
+/* --- Képernyős stílusok --- */
+.card-wrapper {
+  width: 160px;
+  height: 210px;
+  position: relative;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  /* Flexbox-szal egymás alá rendezzük a tartalmat, hogy semmi ne csússzon el */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.card-wrapper:hover {
+  transform: scale(1.04);
+}
+.card-wrapper.selected-card {
+  border-color: #4f46e5;
+  box-shadow: 0 0 15px rgba(79, 70, 229, 0.4);
+}
+/* Alapállapot: Itt állítjuk be a belső kártya egyetlen, tiszta zöld szegélyét */
+.card-wrapper ::ng-deep .dobble-card {
+  border: 3px solid #22c55e !important; /* Egyetlen szép zöld körvonal */
+  border-radius: 50% !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+/* Kijelölve állapot: Amikor rákattintasz, az az egy darab zöld körvonal átvált világító lilára */
+.card-wrapper.selected-card ::ng-deep .dobble-card {
+  border-color: #4f46e5 !important; /* Erőteljes lila/kék szegély */
+  box-shadow: 0 0 15px rgba(79, 70, 229, 0.6) !important;
+}
+.card-number {
+  font-size: 10px;
+  color: #999;
+  position: absolute;
+  top: 10px;
+}
+.card-inner-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  width: 85%;
+}
+
+.emoji-item {
+  font-size: 24px;
+  display: inline-block;
+  transition:
+    transform 0.1s,
+    font-size 0.2s;
+}
+.highlighted-emoji {
+  transform: scale(1.5) !important;
+  text-shadow: 0 0 10px rgba(79, 70, 229, 0.6);
+  z-index: 10;
+}
+
+/* Rejtjük a tiszta nyomtatási területet a monitoron */
+.printable-area {
+  display: none;
+}
+
+/* --- NYOMTATÁSI BEÁLLÍTÁSOK (Print CSS) --- */
+@media print {
+  /* Minden felesleges UI elemet elrejtünk */
+  .non-printable,
+  .non-printable-card {
+    display: none !important;
+  }
+
+  body,
+  html {
+    background: white !important;
+  }
+
+  .printable-area {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr); /* 3 kártya egy sorban a papíron */
+    gap: 30px;
+    padding: 20px;
+  }
+
+  .print-card {
+    width: 160px;
+    height: 160px;
+    border: 2px solid #000000 !important; /* Fekete vágási él */
+    border-radius: 50% !important;
+    background: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    page-break-inside: avoid;
+  }
+
+  .print-card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    width: 85%;
+  }
+
+  .print-emoji {
+    font-size: 26px;
+    display: inline-block;
+  }
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+    color: #4f46e5;
+  }
+}
+.match-pulse {
+  animation: pulse 1.5s infinite ease-in-out;
+}
