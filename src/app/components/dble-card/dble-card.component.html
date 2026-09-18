@@ -49,3 +49,10 @@
     🔀 Keverés
   </button>
 </div>
+<!-- ÚJ KISZERVEZETT POPUP MEGHÍVÁSA -->
+<app-dble-card-editor
+  *ngIf="isPopupOpen"
+  [(placedItems)]="placedItems"
+  (close)="isPopupOpen = false"
+>
+</app-dble-card-editor>

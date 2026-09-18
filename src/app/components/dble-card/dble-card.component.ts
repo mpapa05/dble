@@ -18,6 +18,9 @@ export class DbleCardComponent implements OnChanges {
   // Ez a tömb tárolja a már véletlenszerűen elhelyezett elemeket
   placedItems: PlacedItem[] = [];
 
+  isPopupOpen = false;
+  selectedItemIndex: number | null = null;
+
   ngOnChanges(changes: SimpleChanges): void {
     // Ha új kártyatartalom érkezik, újraosztjuk a pozíciókat
     if (changes['items'] && this.items) {
@@ -25,8 +28,14 @@ export class DbleCardComponent implements OnChanges {
     }
   }
 
-  pulic openCardPopUp(event) {
-    console.log('opencardPopUp', event)
+  public openCardPopUp(event: MouseEvent): void {
+    event.preventDefault();
+    this.isPopupOpen = true;
+  }
+
+  public closePopup(): void {
+    this.isPopupOpen = false;
+    this.selectedItemIndex = null;
   }
 
   /**

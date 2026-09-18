@@ -1,0 +1,67 @@
+<div class="editor-overlay non-printable" (click)="closePopup()">
+  <div class="editor-modal" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
+      <h3>Kártya kézi szerkesztője</h3>
+      <button class="close-btn" (click)="closePopup()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- BAL OLDAL: A kártya nagyban kifehérítve/kiemelve -->
+      <div class="preview-container">
+        <div class="dobble-card large-card">
+          <div class="card-area">
+            <div
+              *ngFor="let item of placedItems; let i = index"
+              [style.top]="item.top"
+              [style.left]="item.left"
+              [style.transform]="item.transform"
+              class="dobble-item editable-item"
+              [class.selected-item]="selectedItemIndex === i"
+              (click)="selectItem(i)"
+            >
+              <img *ngIf="item.isImage" [src]="item.text" alt="symbol" class="symbol-img" />
+              <span *ngIf="!item.isImage">{{ item.text }}</span>
+            </div>
+          </div>
+        </div>
+        <p class="hint-text">Kattints a kártyán lévő egyik emojira a szerkesztéshez!</p>
+      </div>
+
+      <!-- JOBB OLDAL: Kontrollerek -->
+      <div class="controls-container">
+        <h4 *ngIf="selectedItemIndex === null">Nincs elem kijelölve</h4>
+        <h4 *ngIf="selectedItemIndex !== null">
+          Szerkesztés: {{ placedItems[selectedItemIndex].text }}
+        </h4>
+
+        <div *ngIf="selectedItemIndex !== null" class="sliders">
+          <div class="control-group">
+            <label>Méret (Nagyítás): <span>{{currentScale}}x</span></label>
+            <input type="range" min="0.4" max="2.5" step="0.05" 
+                   [(ngModel)]="currentScale" (input)="updateItemTransform()" />
+          </div>
+
+          <div class="control-group">
+            <label>Forgatás: <span>{{currentRotation}}°</span></label>
+            <input type="range" min="0" max="360" step="5" 
+                   [(ngModel)]="currentRotation" (input)="updateItemTransform()" />
+          </div>
+
+          <div class="control-group">
+            <label>Függőleges (Top): <span>{{currentTop}}%</span></label>
+            <input type="range" min="0" max="100" step="1" 
+                   [(ngModel)]="currentTop" (input)="updateItemTransform()" />
+          </div>
+
+          <div class="control-group">
+            <label>Vízszintes (Left): <span>{{currentLeft}}%</span></label>
+            <input type="range" min="0" max="100" step="1" 
+                   [(ngModel)]="currentLeft" (input)="updateItemTransform()" />
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
