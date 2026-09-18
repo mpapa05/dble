@@ -31,6 +31,8 @@ export class DbleCardComponent implements OnChanges {
   public openCardPopUp(event: MouseEvent): void {
     event.preventDefault();
     this.isPopupOpen = true;
+    console.log('popup', event);
+    
   }
 
   public closePopup(): void {
