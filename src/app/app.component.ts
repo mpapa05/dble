@@ -36,7 +36,6 @@ export class AppComponent implements OnInit {
 
   // Elérhető emoji készlet a kártyákhoz
   private emojiList: string[] = [
-  // --- EREDETI 60 ELEM ---
   '🦊', '🚀', '🍕', '💎', '🦁', '🍀', '🎸', '🌋', '🍉', '👻',
   '🎨', '👑', '🛸', '🦖', '🍿', '🌍', '⚡', '🍄', '🍦', '🎡',
   '🎲', '🦉', '🥥', '🛹', '🥨', '🦩', '🎈', '🥑', '👾', '🌈',
