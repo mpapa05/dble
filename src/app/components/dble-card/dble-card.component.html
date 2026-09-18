@@ -1,5 +1,8 @@
 <!-- A kör alakú kártya, amiben az emojik laknak -->
-<div class="dobble-card">
+<div 
+  class="dobble-card"
+  (rtclick)="openCardPopUp($event)"
+  >
   <div class="card-area">
     <div
       *ngFor="let item of placedItems"

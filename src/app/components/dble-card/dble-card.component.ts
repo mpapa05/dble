@@ -25,6 +25,10 @@ export class DbleCardComponent implements OnChanges {
     }
   }
 
+  pulic openCardPopUp(event) {
+    console.log('opencardPopUp', event)
+  }
+
   /**
    * Külsőleg vagy belsőleg is meghívható metódus, ami helyben
    * újrakeveri a pozíciókat és méreteket ugyanazokkal az elemekkel.
