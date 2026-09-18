@@ -61,17 +61,18 @@ export class DbleCardComponent implements OnChanges {
       // Az arany metszés szöge (Golden Angle) biztosítja a szép eloszlást
       const goldenAngle = 137.5;
 
-      // Adunk a szöghöz egy kis extra random csavart is (+/- 15 fok), hogy ne legyen túl szabályos a spirál
-      const randomAngleOffset = (Math.random() * 30 - 15) * (Math.PI / 180);
+      // Kisebb random eltolás a szögnél, hogy ne bomoljon fel teljesen a kitöltési minta (+/- 10 fok)
+      const randomAngleOffset = (Math.random() * 20 - 10) * (Math.PI / 180);
       const angle = index * goldenAngle * (Math.PI / 180) + randomAngleOffset;
 
-      // A sugár (középponttól való távolság) kiszámítása.
-      // Egy kis véletlenszerűséggel megbolondítjuk, hogy ne fix körvonalakon üljenek az elemek.
-      const baseR = (Math.sqrt(index + 0.5) / Math.sqrt(count)) * 0.55 + 0.1;
-      const randomROffset = Math.random() * 0.1 - 0.05; // +/- 5% eltolás a sugárban
+      // UGYANAZ AZ ELOSZLÁS, DE JOBB TÉRKITÖLTÉSSEL:
+      // A belső elemek közelebb mehetnek a középponthoz (0.05), a külsők pedig sokkal kijjebb (0.88-ig).
+      const baseR = (Math.sqrt(index + 0.5) / Math.sqrt(count)) * 0.83 + 0.05;
+      const randomROffset = Math.random() * 0.08 - 0.04; // Kicsit szűkebb +/- 4% random eltolás
 
-      // Biztonsági korlát, hogy semmiképp ne lógjon ki a 0.7-es maximális sugárból
-      const r = Math.min(Math.max(baseR + randomROffset, 0.1), 0.68);
+      // Biztonsági korlát: 0.88-ig engedjük ki az elemeket. 
+      // (Ha 1.0 lenne, az elem közepe pontosan a kör szélére esne, így a fele lelógna. A 0.88 ideális kompromisszum.)
+      const r = Math.min(Math.max(baseR + randomROffset, 0.05), 0.88);
 
       // Átváltás Descartes-koordinátákra (X, Y) százalékos formában a kártya közepéhez képest (50%, 50%)
       const left = 50 + r * Math.cos(angle) * 50;
