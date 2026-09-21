@@ -8,7 +8,7 @@
       [style.top]="item.top"
       [style.left]="item.left"
       [style.transform]="item.transform"
-      [class.highlighted]="highlightedItems.includes(item.text)"
+      [class.highlighted]="highlightedItems && highlightedItems.includes(item.text)"
       class="dobble-item"
     >
       <img
@@ -17,7 +17,7 @@
         alt="symbol"
         class="symbol-img"
       />
-      <span *ngIf="!item.isImage">{{ item.text }}</span>
+      <span>{{ item.text }}</span>
     </div>
   </div>
 </div>
