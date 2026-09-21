@@ -22,7 +22,7 @@ export class DbleCardComponent implements OnChanges {
   isPopupOpen = false;
   selectedItemIndex: number | null = null;
 
-  openCardPopUp(event: MouseEvent): void {
+  openCardPopUp(): void {
     event.preventDefault(); // Böngésző menü tiltása
     event.stopPropagation(); // Buborékolás megállítása
     this.isPopupOpen = true;

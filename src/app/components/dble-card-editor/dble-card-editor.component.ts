@@ -16,7 +16,7 @@ export class DbleCardEditorComponent {
   
   // Események a szülő felé: bezárás és adatok frissülése
   @Output() close = new EventEmitter<void>();
-  @Output('itemsChange') itemsChange = new EventEmitter<PlacedItem[]>();
+  @Output('placedItemsChange') placedItemsChange = new EventEmitter<PlacedItem[]>();
 
   selectedItemIndex: number | null = null;
   
@@ -53,6 +53,6 @@ export class DbleCardEditorComponent {
     item.transform = `translate(-50%, -50%) rotate(${this.currentRotation}deg) scale(${this.currentScale})`;
 
     // Értesítjük a szülőt, hogy megváltozott a tömb tartalma
-    this.itemsChange.emit([...this.placedItems]);
+    this.placedItemsChange.emit([...this.placedItems]);
   }
 }
