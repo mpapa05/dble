@@ -1,7 +1,6 @@
 <!-- A kör alakú kártya, amiben az emojik laknak -->
 <div 
   class="dobble-card"
-  (contextmenu)="onRightClick($event)"
   >
   <div class="card-area">
     <div
@@ -24,31 +23,57 @@
 </div>
 
 <!-- FIX: A gomb teljesen kikerült a körből, így nincs többé takarásban -->
-<div
-  style="text-align: center; margin-top: 12px; position: relative; z-index: 30"
-  class="non-printable"
->
-  <button
-    type="button"
-    (click)="shuffle(); $event.stopPropagation()"
-    style="
-      background: #f1f5f9;
-      border: 1px solid #cbd5e0;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: bold;
-      color: #475569;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    "
-  >
-    🔀 Keverés
-  </button>
+<!-- AKCIÓGOMBOK KONTÉNERE (Egy vonalban, nyomtatáskor rejtve) -->
+<div class="non-printable" style="text-align: center; margin-top: 12px; position: relative; z-index: 30;">
+  <div style="display: inline-flex; gap: 8px; justify-content: center; align-items: center;">
+    
+    <!-- KEVERÉS GOMB -->
+    <button
+      type="button"
+      (click)="shuffle(); $event.stopPropagation()"
+      style="
+        background: #f1f5f9;
+        border: 1px solid #cbd5e0;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: bold;
+        color: #475569;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      "
+    >
+      🔀 Keverés
+    </button>
+
+    <!-- ÚJ: SZERKESZTÉS GOMB -->
+    <button
+      type="button"
+      (click)="openCardPopUp(); $event.stopPropagation()"
+      style="
+        background: #e0f2fe;
+        border: 1px solid #bae6fd;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: bold;
+        color: #0369a1;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      "
+    >
+      ✏️ Szerkesztés
+    </button>
+
+  </div>
 </div>
+
 <!-- ÚJ KISZERVEZETT POPUP MEGHÍVÁSA -->
 <app-dble-card-editor
   *ngIf="isPopupOpen"

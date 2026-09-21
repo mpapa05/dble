@@ -22,7 +22,7 @@ export class DbleCardComponent implements OnChanges {
   selectedItemIndex: number | null = null;
 
   @HostListener('contextmenu', ['$event'])
-  onRightClick(event: MouseEvent): void {
+  openCardPopUp(event: MouseEvent): void {
     event.preventDefault(); // Böngésző menü tiltása
     event.stopPropagation(); // Buborékolás megállítása
     this.isPopupOpen = true;
