@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DobbleItem, PlacedItem } from '../../interfaces/dobble.interface';
+import { PlacedItem } from '../../interfaces/dobble.interface';
 import { DbleCardEditorComponent } from '../dble-card-editor/dble-card-editor.component';
 
 @Component({
@@ -11,31 +11,31 @@ import { DbleCardEditorComponent } from '../dble-card-editor/dble-card-editor.co
   styleUrl: './dble-card.component.scss',
 })
 export class DbleCardComponent implements OnChanges {
-  // Megkapja az adott kártya szimbólumait a szülőtől
+  // A szülőtől kapott kész pozíciók
   @Input() placedItems: PlacedItem[] = [];
-  // Megkapja a globálisan kijelölt/felvillantott emojikat az ellenőrzőből
   @Input() highlightedItems: string[] = [];
-  // ESEMÉNYEK A SZÜLŐ FELÉ:
-  // Jelzi a szülőnek, ha a popupban elmozgattunk egy emojit
+
   @Output() cardChanged = new EventEmitter<PlacedItem[]>();
-  // Jelzi a szülőnek, ha erre a kártyára egyedi újrakeverést kértünk
   @Output() requestShuffle = new EventEmitter<void>();
 
   isPopupOpen = false;
   selectedItemIndex: number | null = null;
-  
 
   openCardPopUp(): void {
     this.isPopupOpen = true;
-     console.log('Popup megnyitva gombnyomásra!');
+    console.log('Popup megnyitva gombnyomásra!');
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Ha új kártyatartalom érkezik, újraosztjuk a pozíciókat
-    if (changes['placedItems'] && this.placedItems) {
-      this.generateRandomPositions();
+    // FONTOS: Csak akkor engedjük lefutni, ha a placedItems most érkezett meg LEGELSŐSZÖR (üresből jött)
+    // Ha már van benne adat, és nem külső generálás történt, nem nyúlunk hozzá, hogy a kézi szerkesztés megmaradjon!
+    if (changes['placedItems'] && this.placedItems && this.placedItems.length > 0) {
+      const prev = changes['placedItems'].previousValue;
+      if (!prev || prev.length === 0) {
+        // Ez az első betöltés, ilyenkor megtartjuk a szülő által adott pozíciókat
+        console.log('Első betöltés, megtartjuk a szülő pozícióit');
+      }
     }
-    console.log('placedItems', this.placedItems);
   }
 
   public closePopup(): void {
@@ -43,74 +43,65 @@ export class DbleCardComponent implements OnChanges {
     this.selectedItemIndex = null;
   }
 
-  // Amikor a popup kiadja a módosított tömböt, elmentjük és azonnal továbbítjuk a főoldal felé
   onItemsChanged(updatedItems: PlacedItem[]): void {
     this.placedItems = updatedItems;
     this.cardChanged.emit(updatedItems);
   }
 
   /**
-   * Külsőleg vagy belsőleg is meghívható metódus, ami helyben
-   * újrakeveri a pozíciókat és méreteket ugyanazokkal az elemekkel.
+   * Amikor megnyomják a Keverés gombot, helyben újrakeverjük az elemek koordinátáit,
+   * majd az új elrendezést visszaküldjük a szülőnek is!
    */
   public shuffle(): void {
-    this.requestShuffle.emit();
+    if (this.placedItems && this.placedItems.length > 0) {
+      this.generateRandomPositions();
+      // Az újrakevert pozíciókat azonnal elmentjük a szülőben is, hogy a nyomtatásba is átkerüljön!
+      this.cardChanged.emit([...this.placedItems]);
+    }
   }
 
   /**
-   * Kiszámolja a szimbólumok random helyét egy kör alakú pályán belül.
-   * Minden meghíváskor teljesen új pozíciókat, méreteket és forgatásokat oszt ki.
+   * JAVÍTOTT LOGIKA: Nem semmisíti meg az adatokat, hanem a meglévő elemeket
+   * keveri újra teljesen véletlenszerű helyekre.
    */
   private generateRandomPositions(): void {
     const count = this.placedItems.length;
-    this.placedItems = [];
-
     if (count === 0) return;
 
-    // 1. LÉPÉS: Leklónozzuk és véletlenszerűen megkeverjük a bejövő elemek sorrendjét (Fisher-Yates shuffle).
-    // Ez garantálja, hogy az emojik kártyánként teljesen más indexet kapjanak, így drasztikusan új helyre kerülnek!
-    const shuffledItems = [...this.placedItems];
-    for (let i = shuffledItems.length - 1; i > 0; i--) {
+    // 1. LÉPÉS: Először LEMÁSÓLJUK a meglévő elemeket egy biztonságos lokális tömbbe!
+    const itemsToShuffle = [...this.placedItems];
+
+    // 2. LÉPÉS: Most már biztonságosan kiüríthetjük a kártya aktuális megjelenítését
+    this.placedItems = [];
+
+    // 3. LÉPÉS: Fisher-Yates shuffle a lemásolt elemeken
+    for (let i = itemsToShuffle.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [shuffledItems[i], shuffledItems[j]] = [
-        shuffledItems[j],
-        shuffledItems[i],
-      ];
+      [itemsToShuffle[i], itemsToShuffle[j]] = [itemsToShuffle[j], itemsToShuffle[i]];
     }
 
-    // 2. LÉPÉS: Pozíciók kiosztása a megkevert elemeknek
-    shuffledItems.forEach((item, index) => {
-      // Az arany metszés szöge (Golden Angle) biztosítja a szép eloszlást
+    // 4. LÉPÉS: Új pozíciók, szögek és méretek kiosztása a megkevert elemeknek
+    itemsToShuffle.forEach((item, index) => {
       const goldenAngle = 137.5;
-
-      // Kisebb random eltolás a szögnél, hogy ne bomoljon fel teljesen a kitöltési minta (+/- 10 fok)
       const randomAngleOffset = (Math.random() * 20 - 10) * (Math.PI / 180);
       const angle = index * goldenAngle * (Math.PI / 180) + randomAngleOffset;
 
-      // UGYANAZ AZ ELOSZLÁS, DE JOBB TÉRKITÖLTÉSSEL:
-      // A belső elemek közelebb mehetnek a középponthoz (0.05), a külsők pedig sokkal kijjebb (0.88-ig).
       const baseR = (Math.sqrt(index + 0.5) / Math.sqrt(count)) * 0.83 + 0.05;
-      const randomROffset = Math.random() * 0.08 - 0.04; // Kicsit szűkebb +/- 4% random eltolás
-
-      // Biztonsági korlát: 0.88-ig engedjük ki az elemeket. 
-      // (Ha 1.0 lenne, az elem közepe pontosan a kör szélére esne, így a fele lelógna. A 0.88 ideális kompromisszum.)
+      const randomROffset = Math.random() * 0.08 - 0.04;
       const r = Math.min(Math.max(baseR + randomROffset, 0.05), 0.88);
 
-      // Átváltás Descartes-koordinátákra (X, Y) százalékos formában a kártya közepéhez képest (50%, 50%)
       const left = 50 + r * Math.cos(angle) * 50;
       const top = 50 + r * Math.sin(angle) * 50;
 
-      // Véletlenszerű forgatás és egyedi méretezés generálása
       const rotation = Math.floor(Math.random() * 360);
-      const scale = parseFloat(
-        (Math.random() * (1.3 - 0.75) + 0.75).toFixed(2),
-      );
+      const scale = parseFloat((Math.random() * (1.3 - 0.75) + 0.75).toFixed(2));
 
+      // Visszatöltjük a frissített koordinátákkal
       this.placedItems.push({
-        text: item.text,
+        text: item.text, // Megtartja az eredeti emojit/szöveget!
         isImage: !!item.isImage,
-        top: `${top}%`,
-        left: `${left}%`,
+        top: `${top.toFixed(2)}%`,
+        left: `${left.toFixed(2)}%`,
         transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${scale})`,
       });
     });
