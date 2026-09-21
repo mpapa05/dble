@@ -21,18 +21,19 @@ export class DbleCardComponent implements OnChanges {
   isPopupOpen = false;
   selectedItemIndex: number | null = null;
 
+  @HostListener('contextmenu', ['$event'])
+  onRightClick(event: MouseEvent): void {
+    event.preventDefault(); // Böngésző menü tiltása
+    event.stopPropagation(); // Buborékolás megállítása
+    this.isPopupOpen = true;
+    console.log('Popup megnyitva a :host-on keresztül!', event);
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     // Ha új kártyatartalom érkezik, újraosztjuk a pozíciókat
     if (changes['items'] && this.items) {
       this.generateRandomPositions();
     }
-  }
-
-  public openCardPopUp(event: MouseEvent): void {
-    event.preventDefault();
-    this.isPopupOpen = true;
-    console.log('popup', event);
-    
   }
 
   public closePopup(): void {
