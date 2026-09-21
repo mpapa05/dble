@@ -263,10 +263,10 @@ export class AppComponent implements OnInit {
     return deck.filter((card) => card.length === k);
   }
 
-  private mapToVisualDeck(numericDeck: number[][]): PlacedItem[][] {
+  public mapToVisualDeck(numericDeck: number[][]): PlacedItem[][] {
     return numericDeck.map((card) => {
       const count = card.length;
-      const placed: any[] = [];
+      const placed: PlacedItem[] = [];
       if (count === 0) return [];
 
       // 1. LÉPÉS: Megkeverjük a számokat a kártyán belül a változatosságért
@@ -276,7 +276,7 @@ export class AppComponent implements OnInit {
         [shuffledCard[i], shuffledCard[j]] = [shuffledCard[j], shuffledCard[i]];
       }
 
-      // 2. LÉPÉS: Kiosztjuk a pozíciókat a Golden Angle spirál alapján
+      // 2. LÉPÉS: Kiosztjuk a pozíciókat a Golden Angle spirál alapján (0.88-as kitöltés)
       shuffledCard.forEach((num, index) => {
         const goldenAngle = 137.5;
         const randomAngleOffset = (Math.random() * 20 - 10) * (Math.PI / 180);
@@ -293,7 +293,7 @@ export class AppComponent implements OnInit {
 
         placed.push({
           text: this.emojiList[num] || `[${num}]`,
-          isImage: false, // Ha használsz képeket, ide mehet a logikája, alapból false
+          isImage: false,
           top: `${top.toFixed(2)}%`,
           left: `${left.toFixed(2)}%`,
           transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${scale})`,
@@ -308,7 +308,7 @@ export class AppComponent implements OnInit {
    * Kézi szerkesztés mentése: Amikor a popupból visszajön a módosított kártya,
    * itt frissítjük a központi tömb adott indexű elemét.
    */
-  public updateCardInDeck(cardIndex: number, updatedItems: any[]): void {
+  public updateCardInDeck(cardIndex: number, updatedItems: PlacedItem[]): void {
     this.generatedDeck[cardIndex] = updatedItems;
     console.log(`Kártya elmentve a központi tömbben! Index: ${cardIndex}`);
   }
@@ -320,7 +320,6 @@ export class AppComponent implements OnInit {
   public shuffleSingleCard(cardIndex: number): void {
     const originalCardNumbers = this.rawDeck[cardIndex];
     if (originalCardNumbers) {
-      // Egyetlen kártyát újra átfuttatunk a pozicionáló logikán
       const singleCardDeck = this.mapToVisualDeck([originalCardNumbers]);
       this.generatedDeck[cardIndex] = singleCardDeck[0];
     }
