@@ -66,10 +66,24 @@ export class AppComponent implements OnInit {
 
       // Amikor a worker végzett a nehéz munkával:
       this.worker.onmessage = ({ data }) => {
+        // Ha a worker valamiért üres adatot küldene, ne engedjük felülírni a paklit
+        if (!data || data.length === 0) {
+          console.warn('A Web Worker üres adatot küldött vissza!');
+          return;
+        }
+
+        console.log('1. SIKER: Nyers számok megérkeztek a háttérszálról:', data);
         this.rawDeck = data;
-        this.generatedDeck = [...this.mapToVisualDeck(this.rawDeck)];
-        console.log('A szülő sikeresen frissítette a generatedDeck referenciáját!', this.generatedDeck);
-        this.isLoading = false; // Leállítjuk a loading-ot
+
+        // Kiszámoljuk a vizuális pozíciókat
+        const visualResult = this.mapToVisualDeck(this.rawDeck);
+        console.log('2. SIKER: Vizuális koordináták legyártva:', visualResult);
+
+        // Új referenciával átadjuk az Angularnak
+        this.generatedDeck = [...visualResult];
+        this.isLoading = false;
+        
+        console.log('3. SIKER: generatedDeck frissítve a szülőben, hossza:', this.generatedDeck.length);
       };
     }
 
