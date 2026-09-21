@@ -1,3 +1,4 @@
+/* --- NATIV DIALOG ALAPBEÁLLÍTÁSOK --- */
 .editor-dialog-native {
   border: none;
   background: transparent;
@@ -12,10 +13,11 @@
   }
 }
 
+/* Modál Ablak Elrendezése */
 .editor-modal {
   background: white;
   border-radius: 12px;
-  width: 600px; /* Kicsit keskenyebb ablak elég, mivel a kártya kompakt maradt */
+  width: 550px;
   max-width: 90vw;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   display: flex;
@@ -39,10 +41,12 @@
 .modal-body {
   display: flex;
   padding: 24px;
-  gap: 24px;
+  gap: 32px;
   align-items: center;
+  justify-content: center;
 }
 
+/* Bal hasáb - Előnézeti szürke box */
 .preview-container {
   display: flex;
   flex-direction: column;
@@ -58,6 +62,44 @@
   font-size: 11px; color: #64748b; margin-top: 12px; text-align: center; line-height: 1.4;
 }
 
+/* --- KRITIKUS JAVÍTÁS: A KEREK KÁRTYA REPRODUKÁLÁSA --- */
+.dobble-card {
+  width: 160px !important;   /* Fixen rákényszerítjük az eredeti méretet */
+  height: 160px !important;  /* Fixen rákényszerítjük az eredeti méretet */
+  border: 3px solid #22c55e; 
+  border-radius: 50% !important; /* Ettől lesz újra tökéletes kör! */
+  background-color: #ffffff;
+  position: relative !important;
+  overflow: hidden !important;
+  user-select: none;
+}
+
+.card-area {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Az emojik konténere, amik egymáson és a százalékos helyükön kell üljenek */
+.dobble-item {
+  position: absolute !important; /* Kulcsfontosságú, hogy ne essenek egymás alá! */
+  font-size: 26px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  z-index: 10;
+}
+
+.symbol-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* --- DRAG & DROP ÉS KIJELÖLÉS STÍLUSOK --- */
 .editable-item {
   cursor: grab;
   &:active { cursor: grabbing; }
@@ -75,6 +117,7 @@
   z-index: 99;
 }
 
+/* Jobb hasáb - Vezérlők stílusai */
 .controls-container {
   flex: 1;
   display: flex;
