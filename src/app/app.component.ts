@@ -263,20 +263,25 @@ export class AppComponent implements OnInit {
     return deck.filter((card) => card.length === k);
   }
 
-  public mapToVisualDeck(numericDeck: number[][]): PlacedItem[][] {
-    return numericDeck.map((card) => {
+  private mapToVisualDeck(numericDeck: number[][]): PlacedItem[][] {
+    console.log('Nyers számok érkeztek a Workertől:', numericDeck); // <-- TESZT LOG 1
+    
+    if (!numericDeck || numericDeck.length === 0) {
+      console.warn('A kapott pakli tömb teljesen üres!');
+      return [];
+    }
+
+    const visualDeck = numericDeck.map((card) => {
       const count = card.length;
       const placed: PlacedItem[] = [];
       if (count === 0) return [];
 
-      // 1. LÉPÉS: Megkeverjük a számokat a kártyán belül a változatosságért
       const shuffledCard = [...card];
       for (let i = shuffledCard.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [shuffledCard[i], shuffledCard[j]] = [shuffledCard[j], shuffledCard[i]];
       }
 
-      // 2. LÉPÉS: Kiosztjuk a pozíciókat a Golden Angle spirál alapján (0.88-as kitöltés)
       shuffledCard.forEach((num, index) => {
         const goldenAngle = 137.5;
         const randomAngleOffset = (Math.random() * 20 - 10) * (Math.PI / 180);
@@ -302,7 +307,11 @@ export class AppComponent implements OnInit {
 
       return placed;
     });
+
+    console.log('Legenerált vizuális pakli koordinátákkal:', visualDeck); // <-- TESZT LOG 2
+    return visualDeck;
   }
+
 
   /**
    * Kézi szerkesztés mentése: Amikor a popupból visszajön a módosított kártya,
