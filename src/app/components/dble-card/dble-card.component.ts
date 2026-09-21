@@ -23,10 +23,8 @@ export class DbleCardComponent implements OnChanges {
   selectedItemIndex: number | null = null;
 
   openCardPopUp(): void {
-    event.preventDefault(); // Böngésző menü tiltása
-    event.stopPropagation(); // Buborékolás megállítása
     this.isPopupOpen = true;
-    console.log('Popup megnyitva a :host-on keresztül!', event);
+     console.log('Popup megnyitva gombnyomásra!');
   }
 
   ngOnChanges(changes: SimpleChanges): void {
