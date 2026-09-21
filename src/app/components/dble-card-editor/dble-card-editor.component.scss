@@ -1,0 +1,28 @@
+/* A natív dialog alapértelmezett kereteinek törlése */
+.editor-dialog-native {
+  border: none;
+  background: transparent;
+  padding: 0;
+  overflow: visible;
+  max-width: unset;
+  max-height: unset;
+
+  /* A böngésző beépített sötétítő háttere, ami minden létező elem felett lesz */
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px); /* Opcionális: pici elhomályosítás a háttérnek */
+  }
+}
+
+/* Modál Doboz (Változatlan a korábbi verzióhoz képest) */
+.editor-modal {
+  background: white;
+  border-radius: 12px;
+  width: 800px;
+  max-width: 90vw;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+

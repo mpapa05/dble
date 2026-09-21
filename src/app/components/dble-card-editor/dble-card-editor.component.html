@@ -1,4 +1,4 @@
-<div class="editor-overlay non-printable" (click)="closePopup()">
+<dialog #editorDialog class="editor-dialog-native non-printable" (click)="closeOnOverlayClick($event)">
   <div class="editor-modal" (click)="$event.stopPropagation()">
     
     <div class="modal-header">
@@ -64,4 +64,4 @@
 
     </div>
   </div>
-</div>
+</dialog>
