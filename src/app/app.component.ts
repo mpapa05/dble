@@ -67,7 +67,7 @@ export class AppComponent implements OnInit {
       // Amikor a worker végzett a nehéz munkával:
       this.worker.onmessage = ({ data }) => {
         this.rawDeck = data;
-        this.generatedDeck = this.mapToVisualDeck(this.rawDeck);
+        this.generatedDeck = [...this.mapToVisualDeck(this.rawDeck)];
         this.isLoading = false; // Leállítjuk a loading-ot
       };
     }

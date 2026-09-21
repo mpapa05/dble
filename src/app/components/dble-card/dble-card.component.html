@@ -11,12 +11,12 @@
       [class.highlighted]="highlightedItems && highlightedItems.includes(item.text)"
       class="dobble-item"
     >
-      <img
+      <!-- <img
         *ngIf="item.isImage"
         [src]="item.text"
         alt="symbol"
         class="symbol-img"
-      />
+      /> -->
       <span>{{ item.text }}</span>
     </div>
   </div>
