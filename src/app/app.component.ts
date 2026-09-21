@@ -68,6 +68,7 @@ export class AppComponent implements OnInit {
       this.worker.onmessage = ({ data }) => {
         this.rawDeck = data;
         this.generatedDeck = [...this.mapToVisualDeck(this.rawDeck)];
+        console.log('A szülő sikeresen frissítette a generatedDeck referenciáját!', this.generatedDeck);
         this.isLoading = false; // Leállítjuk a loading-ot
       };
     }
