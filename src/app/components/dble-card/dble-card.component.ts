@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DobbleItem, PlacedItem } from '../../interfaces/dobble.interface';
-import { DbleCardEditorComponent } from '../DbleCardEditorComponent/DbleCardComponent'
+import { DbleCardEditorComponent } from '../dble-card-editor/DbleCardComponent'
 
 @Component({
   selector: 'app-dble-card',
