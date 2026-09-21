@@ -3,7 +3,6 @@
   class="dobble-card"
   >
   <div class="card-area">
-    {{ placedItems | json }}
     <div
       *ngFor="let item of placedItems"
       [style.top]="item.top"
