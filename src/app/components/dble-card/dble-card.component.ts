@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DobbleItem, PlacedItem } from '../../interfaces/dobble.interface';
 import { DbleCardEditorComponent } from '../dble-card-editor/dble-card-editor.component';
@@ -12,15 +12,18 @@ import { DbleCardEditorComponent } from '../dble-card-editor/dble-card-editor.co
 })
 export class DbleCardComponent implements OnChanges {
   // Megkapja az adott kártya szimbólumait a szülőtől
-  @Input() items: DobbleItem[] = [];
+  @Input() placedItems: PlacedItem[] = [];
   // Megkapja a globálisan kijelölt/felvillantott emojikat az ellenőrzőből
   @Input() highlightedItems: string[] = [];
-
-  // Ez a tömb tárolja a már véletlenszerűen elhelyezett elemeket
-  placedItems: PlacedItem[] = [];
+  // ESEMÉNYEK A SZÜLŐ FELÉ:
+  // Jelzi a szülőnek, ha a popupban elmozgattunk egy emojit
+  @Output() cardChanged = new EventEmitter<PlacedItem[]>();
+  // Jelzi a szülőnek, ha erre a kártyára egyedi újrakeverést kértünk
+  @Output() requestShuffle = new EventEmitter<void>();
 
   isPopupOpen = false;
   selectedItemIndex: number | null = null;
+  
 
   openCardPopUp(): void {
     this.isPopupOpen = true;
@@ -29,7 +32,7 @@ export class DbleCardComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     // Ha új kártyatartalom érkezik, újraosztjuk a pozíciókat
-    if (changes['items'] && this.items) {
+    if (changes['placedItems'] && this.placedItems) {
       this.generateRandomPositions();
     }
   }
@@ -39,14 +42,18 @@ export class DbleCardComponent implements OnChanges {
     this.selectedItemIndex = null;
   }
 
+  // Amikor a popup kiadja a módosított tömböt, elmentjük és azonnal továbbítjuk a főoldal felé
+  onItemsChanged(updatedItems: PlacedItem[]): void {
+    this.placedItems = updatedItems;
+    this.cardChanged.emit(updatedItems);
+  }
+
   /**
    * Külsőleg vagy belsőleg is meghívható metódus, ami helyben
    * újrakeveri a pozíciókat és méreteket ugyanazokkal az elemekkel.
    */
   public shuffle(): void {
-    if (this.items && this.items.length > 0) {
-      this.generateRandomPositions();
-    }
+    this.requestShuffle.emit();
   }
 
   /**
@@ -54,14 +61,14 @@ export class DbleCardComponent implements OnChanges {
    * Minden meghíváskor teljesen új pozíciókat, méreteket és forgatásokat oszt ki.
    */
   private generateRandomPositions(): void {
-    const count = this.items.length;
+    const count = this.placedItems.length;
     this.placedItems = [];
 
     if (count === 0) return;
 
     // 1. LÉPÉS: Leklónozzuk és véletlenszerűen megkeverjük a bejövő elemek sorrendjét (Fisher-Yates shuffle).
     // Ez garantálja, hogy az emojik kártyánként teljesen más indexet kapjanak, így drasztikusan új helyre kerülnek!
-    const shuffledItems = [...this.items];
+    const shuffledItems = [...this.placedItems];
     for (let i = shuffledItems.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffledItems[i], shuffledItems[j]] = [

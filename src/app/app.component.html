@@ -346,8 +346,14 @@
       >
         <span class="card-number">#{{ idx + 1 }}</span>
 
-        <app-dble-card [items]="card" [highlightedItems]="matchingEmojis">
-        </app-dble-card>
+        <app-dble-card 
+    [placedItems]="card" 
+    [highlightedItems]="matchingEmojis"
+    (cardChanged)="updateCardInDeck(idx, $event)"
+    (requestShuffle)="shuffleSingleCard(idx)"
+    (click)="selectCard(idx)"
+  >
+  </app-dble-card>
       </div>
     </div>
   </div>
@@ -355,7 +361,14 @@
 
 <!-- TISZTA NYOMTATÁSI NÉZET (Kizárólag nyomtatási üzemmódban válik láthatóvá a CSS-ből) -->
 <div class="printable-area">
-  <div *ngFor="let card of generatedDeck" class="print-card">
-    <app-dble-card [items]="card" [highlightedItems]="[]"> </app-dble-card>
+  <div *ngFor="let card of generatedDeck; let jdx = index" class="print-card">
+    <app-dble-card 
+    [placedItems]="card" 
+    [highlightedItems]="matchingEmojis"
+    (cardChanged)="updateCardInDeck(jdx, $event)"
+    (requestShuffle)="shuffleSingleCard(jdx)"
+    (click)="selectCard(jdx)"
+  >
+  </app-dble-card>
   </div>
 </div>

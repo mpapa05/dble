@@ -77,7 +77,7 @@
 <!-- ÚJ KISZERVEZETT POPUP MEGHÍVÁSA -->
 <app-dble-card-editor
   *ngIf="isPopupOpen"
-  [(placedItems)]="placedItems"
+  (placedItemsChange)="onItemsChanged($event)"
   (close)="isPopupOpen = false"
 >
 </app-dble-card-editor>

@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
-import { VisualItem } from './interfaces/dobble.interface';
+import { PlacedItem, VisualItem } from './interfaces/dobble.interface';
 import { DbleCardComponent } from './components/dble-card/dble-card.component';
 
 @Component({
@@ -19,7 +19,7 @@ import { DbleCardComponent } from './components/dble-card/dble-card.component';
 })
 export class AppComponent implements OnInit {
   dobbleForm!: FormGroup;
-  generatedDeck: VisualItem[][] = [];
+  generatedDeck: PlacedItem[][] = [];
   rawDeck: number[][] = [];
 
   theoreticalImages = 0;
@@ -263,14 +263,67 @@ export class AppComponent implements OnInit {
     return deck.filter((card) => card.length === k);
   }
 
-  private mapToVisualDeck(numericDeck: number[][]): VisualItem[][] {
-    return numericDeck.map((card) =>
-      card.map((num) => ({
-        text: this.emojiList[num] || `[${num}]`,
-        rotation: Math.floor(Math.random() * 360),
-        scale: parseFloat((Math.random() * (1.3 - 0.8) + 0.8).toFixed(2)),
-      })),
-    );
+  private mapToVisualDeck(numericDeck: number[][]): PlacedItem[][] {
+    return numericDeck.map((card) => {
+      const count = card.length;
+      const placed: any[] = [];
+      if (count === 0) return [];
+
+      // 1. LÉPÉS: Megkeverjük a számokat a kártyán belül a változatosságért
+      const shuffledCard = [...card];
+      for (let i = shuffledCard.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledCard[i], shuffledCard[j]] = [shuffledCard[j], shuffledCard[i]];
+      }
+
+      // 2. LÉPÉS: Kiosztjuk a pozíciókat a Golden Angle spirál alapján
+      shuffledCard.forEach((num, index) => {
+        const goldenAngle = 137.5;
+        const randomAngleOffset = (Math.random() * 20 - 10) * (Math.PI / 180);
+        const angle = index * goldenAngle * (Math.PI / 180) + randomAngleOffset;
+        
+        const baseR = (Math.sqrt(index + 0.5) / Math.sqrt(count)) * 0.83 + 0.05;
+        const randomROffset = Math.random() * 0.08 - 0.04;
+        const r = Math.min(Math.max(baseR + randomROffset, 0.05), 0.88);
+
+        const left = 50 + r * Math.cos(angle) * 50;
+        const top = 50 + r * Math.sin(angle) * 50;
+        const rotation = Math.floor(Math.random() * 360);
+        const scale = parseFloat((Math.random() * (1.3 - 0.75) + 0.75).toFixed(2));
+
+        placed.push({
+          text: this.emojiList[num] || `[${num}]`,
+          isImage: false, // Ha használsz képeket, ide mehet a logikája, alapból false
+          top: `${top.toFixed(2)}%`,
+          left: `${left.toFixed(2)}%`,
+          transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${scale})`,
+        });
+      });
+
+      return placed;
+    });
+  }
+
+  /**
+   * Kézi szerkesztés mentése: Amikor a popupból visszajön a módosított kártya,
+   * itt frissítjük a központi tömb adott indexű elemét.
+   */
+  public updateCardInDeck(cardIndex: number, updatedItems: any[]): void {
+    this.generatedDeck[cardIndex] = updatedItems;
+    console.log(`Kártya elmentve a központi tömbben! Index: ${cardIndex}`);
+  }
+
+  /**
+   * Egyedi újrakeverés: Ha a kártyán a keverés gombra nyomnak,
+   * az eredeti számok alapján újraszámoljuk a pozíciókat csak annak az egy kártyának.
+   */
+  public shuffleSingleCard(cardIndex: number): void {
+    const originalCardNumbers = this.rawDeck[cardIndex];
+    if (originalCardNumbers) {
+      // Egyetlen kártyát újra átfuttatunk a pozicionáló logikán
+      const singleCardDeck = this.mapToVisualDeck([originalCardNumbers]);
+      this.generatedDeck[cardIndex] = singleCardDeck[0];
+    }
   }
 
   // Interaktív kártyakiválasztás kezelése
