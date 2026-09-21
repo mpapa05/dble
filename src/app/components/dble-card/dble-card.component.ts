@@ -35,6 +35,7 @@ export class DbleCardComponent implements OnChanges {
     if (changes['placedItems'] && this.placedItems) {
       this.generateRandomPositions();
     }
+    console.log('placedItems', this.placedItems);
   }
 
   public closePopup(): void {
