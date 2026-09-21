@@ -1,11 +1,12 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DobbleItem, PlacedItem } from '../../interfaces/dobble.interface';
+import { DbleCardEditorComponent } from '../DbleCardEditorComponent/DbleCardComponent'
 
 @Component({
   selector: 'app-dble-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DbleCardEditorComponent],
   templateUrl: './dble-card.component.html',
   styleUrl: './dble-card.component.scss',
 })
