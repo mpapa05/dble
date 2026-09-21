@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
-import { PlacedItem, VisualItem } from './interfaces/dobble.interface';
+import { PlacedItem } from './interfaces/dobble.interface';
 import { DbleCardComponent } from './components/dble-card/dble-card.component';
 
 @Component({
@@ -17,7 +17,7 @@ import { DbleCardComponent } from './components/dble-card/dble-card.component';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   dobbleForm!: FormGroup;
   generatedDeck: PlacedItem[][] = [];
   rawDeck: number[][] = [];
@@ -25,30 +25,28 @@ export class AppComponent implements OnInit {
   theoreticalImages = 0;
   theoreticalCards = 0;
   isValidCombination = true;
-  isLoading = false; // Betöltési állapot állapota
+  isLoading = false;
 
-  // Interaktív ellenőrző változói
   selectedCard1: number | null = null;
   selectedCard2: number | null = null;
   matchingEmojis: string[] = [];
 
   private worker!: Worker;
 
-  // Elérhető emoji készlet a kártyákhoz
   private emojiList: string[] = [
-  '🦊', '🚀', '🍕', '💎', '🦁', '🍀', '🎸', '🌋', '🍉', '👻',
-  '🎨', '👑', '🛸', '🦖', '🍿', '🌍', '⚡', '🍄', '🍦', '🎡',
-  '🎲', '🦉', '🥥', '🛹', '🥨', '🦩', '🎈', '🥑', '👾', '🌈',
-  '🍍', '🧜‍♀️', '🍩', '🌵', '🧩', '⚓', '🧸', '🐝', '🔮', '🌮',
-  '🥞', '🍣', '🦘', '🦔', '🐾', '🪁', '🥊', '🏵️', '🧘', '🛶',
-  '🏎️', '🏰', '🏕️', '🗺️', '⏰', '🔋', '🔑', '🧿', '🚗', '🍎',
-  '🐼', '🐸', '🐙', '🦄', '🐬', '🦜', '🦖', '🐝', '🐢', '🌻', 
-  '🌶️', '🍋', '🍒', '🥕', '🍔', '🍟', '🧁', '🍿', '🥤', '🍺',
-  '🎈', '🎁', '🏆', '💎', '🎨', '🧩', '🎮', '🔮', '🧸', '🪀',
-  '🎵', '🎺', '🛹', '🚲', '🛴', '🚀', '🛸', '⛵', '🗺️', '⏰',
-  '👑', '🎭', '🎪', '🎃', '🎄', '🎆', '✨', '🔥', '💧', '☀️',
-  '🌙', '⭐', '🌈', '⚡', '🍀', '❤️', '🕶️', '👒', '🎒', '🧲'
-];
+    '🦊', '🚀', '🍕', '💎', '🦁', '🍀', '🎸', '🌋', '🍉', '👻',
+    '🎨', '👑', '🛸', '🦖', '🍿', '🌍', '⚡', '🍄', '🍦', '🎡',
+    '🎲', '🦉', '🥥', '🛹', '🥨', '🦩', '🎈', '🥑', '👾', '🌈',
+    '🍍', '🧜‍♀️', '🍩', '🌵', '🧩', '⚓', '🧸', '🐝', '🔮', '🌮',
+    '🥞', '🍣', '🦘', '🦔', '🐾', '🪁', '🥊', '🏵️', '🧘', '🛶',
+    '🏎️', '🏰', '🏕️', '🗺️', '⏰', '🔋', '🔑', '🧿', '🚗', '🍎',
+    '🐼', '🐸', '🐙', '🦄', '🐬', '🦜', '🦖', '🐝', '🐢', '🌻', 
+    '🌶️', '🍋', '🍒', '🥕', '🍔', '🍟', '🧁', '🍿', '🥤', '🍺',
+    '🎈', '🎁', '🏆', '💎', '🎨', '🧩', '🎮', '🔮', '🧸', '🪀',
+    '🎵', '🎺', '🛹', '🚲', '🛴', '🚀', '🛸', '⛵', '🗺️', '⏰',
+    '👑', '🎭', '🎪', '🎃', '🎄', '🎆', '✨', '🔥', '💧', '☀️',
+    '🌙', '⭐', '🌈', '⚡', '🍀', '❤️', '🕶️', '👒', '🎒', '🧲'
+  ];
 
   constructor(private fb: FormBuilder) {}
 
@@ -58,15 +56,12 @@ export class AppComponent implements OnInit {
       matchingImages: [2, [Validators.required, Validators.min(1)]],
     });
 
-    // Inicializáljuk a Web Workert
     if (typeof Worker !== 'undefined') {
       this.worker = new Worker(
         new URL('./dobble-solver.worker', import.meta.url),
       );
 
-      // Amikor a worker végzett a nehéz munkával:
       this.worker.onmessage = ({ data }) => {
-        // Ha a worker valamiért üres adatot küldene, ne engedjük felülírni a paklit
         if (!data || data.length === 0) {
           console.warn('A Web Worker üres adatot küldött vissza!');
           return;
@@ -75,11 +70,10 @@ export class AppComponent implements OnInit {
         console.log('1. SIKER: Nyers számok megérkeztek a háttérszálról:', data);
         this.rawDeck = data;
 
-        // Kiszámoljuk a vizuális pozíciókat
         const visualResult = this.mapToVisualDeck(this.rawDeck);
         console.log('2. SIKER: Vizuális koordináták legyártva:', visualResult);
 
-        // Új referenciával átadjuk az Angularnak
+        // Kényszerített spread operátoros másolás, hogy az Angular Change Detection azonnal tüzeljen
         this.generatedDeck = [...visualResult];
         this.isLoading = false;
         
@@ -88,10 +82,9 @@ export class AppComponent implements OnInit {
     }
 
     this.calculateLimits();
-    // Figyeljük a változásokat, de NEM generálunk azonnal, csak a matekot ellenőrizzük
     this.dobbleForm.valueChanges.subscribe(() => {
       this.calculateLimits();
-      this.generatedDeck = []; // Elrejtjük a régi paklit változtatáskor
+      this.generatedDeck = [];
       this.resetSelection();
     });
   }
@@ -107,19 +100,17 @@ export class AppComponent implements OnInit {
     }
 
     this.theoreticalImages = (k * (k - 1)) / lambda + 1;
-    this.theoreticalCards = this.theoreticalImages; // Szimmetrikus eset
+    this.theoreticalCards = this.theoreticalImages;
     this.isValidCombination = true;
   }
 
-  // Ez a függvény fut le a GENERÁLÁS gomb megnyomásakor!
   startGeneration(): void {
     if (!this.isValidCombination || this.dobbleForm.invalid) return;
 
-    this.isLoading = true; // Elindítjuk a pörgést
+    this.isLoading = true;
     const k = Number(this.dobbleForm.value.imagesPerCard);
     const lambda = Number(this.dobbleForm.value.matchingImages);
 
-    // Átadjuk a munkát a háttérszálnak
     this.worker.postMessage({
       k,
       lambda,
@@ -128,165 +119,10 @@ export class AppComponent implements OnInit {
     });
   }
 
-  processAndGenerate(): void {
-    if (this.dobbleForm.invalid) return;
-
-    const k = Number(this.dobbleForm.value.imagesPerCard);
-    const lambda = Number(this.dobbleForm.value.matchingImages);
-
-    if (lambda >= k) {
-      this.isValidCombination = false;
-      this.generatedDeck = [];
-      return;
-    }
-
-    const r = k;
-    const vNumerator = r * (k - 1);
-
-    if (vNumerator % lambda !== 0) {
-      this.isValidCombination = false;
-      this.generatedDeck = [];
-      return;
-    }
-
-    this.theoreticalImages = vNumerator / lambda + 1;
-    this.theoreticalCards = Math.floor((this.theoreticalImages * r) / k);
-    this.isValidCombination = this.theoreticalCards >= this.theoreticalImages;
-
-    if (!this.isValidCombination) {
-      this.generatedDeck = [];
-      return;
-    }
-
-    this.rawDeck = this.generateNumericDeck(
-      k,
-      lambda,
-      this.theoreticalImages,
-      this.theoreticalCards,
-    );
-    this.generatedDeck = this.mapToVisualDeck(this.rawDeck);
-  }
-
-  private generateNumericDeck(
-    k: number,
-    lambda: number,
-    totalImages: number,
-    maxCards: number,
-  ): number[][] {
-    // Incidencia mátrix: totalImages (sorok) x maxCards (oszlopok)
-    // matrix[s][c] === 1 azt jelenti, hogy az 's' szimbólum szerepel a 'c' kártyán.
-    const matrix: number[][] = Array.from({ length: totalImages }, () =>
-      new Array(maxCards).fill(0),
-    );
-
-    // Nyomon követjük, hogy az egyes kártyákon épp hány szimbólum van (max k lehet)
-    const cardSizes = new Array(maxCards).fill(0);
-    // Nyomon követjük, hogy az egyes szimbólumok hány kártyára lettek lerakva eddig
-    const r = k; // Szimmetrikus eset
-    const symbolCounts = new Array(totalImages).fill(0);
-
-    const startTime = performance.now();
-    const maxExecutionTimeMs = 2000; // 2 másodperces biztonsági korlát
-
-    // Segédfüggvény: kiszámolja két kártya (oszlop) jelenlegi közös szimbólumainak számát
-    const getDotProduct = (c1: number, c2: number): number => {
-      let dots = 0;
-      for (let s = 0; s < totalImages; s++) {
-        if (matrix[s][c1] === 1 && matrix[s][c2] === 1) {
-          dots++;
-        }
-      }
-      return dots;
-    };
-
-    // Ellenőrzi, hogy a szimbólum (s) elhelyezése a kártyán (c) szabályos-e
-    const isValidPlacement = (s: number, c: number): boolean => {
-      // 1. Nem léphetjük túl a kártya maximális kapacitását
-      if (cardSizes[c] >= k) return false;
-      // 2. Egy szimbólum nem szerepelhet több kártyán, mint az elméleti 'r' érték
-      if (symbolCounts[s] >= r) return false;
-
-      // 3. Lambda szabály ellenőrzése a többi kártyával szemben
-      for (let otherCard = 0; otherCard < maxCards; otherCard++) {
-        if (otherCard === c) continue;
-
-        // Ha a másik kártyán is fent van ez a szimbólum
-        if (matrix[s][otherCard] === 1) {
-          // Ha már most elérték vagy túllépték a megengedett egyezést, akkor ide nem tehetjük
-          if (getDotProduct(c, otherCard) >= lambda) {
-            return false;
-          }
-        }
-      }
-      return true;
-    };
-
-    // Mátrix-alapú backtracking kereső
-    const solveMatrix = (s: number, c: number): boolean => {
-      // Ha az összes szimbólumot sikeresen szétosztottuk az összes kártyára
-      if (s === totalImages) {
-        // Dupla ellenőrzés: minden kártyának pontosan k méretűnek kell lennie
-        return cardSizes.every((size) => size === k);
-      }
-
-      if (performance.now() - startTime > maxExecutionTimeMs) {
-        return true; // Időtúllépés esetén visszaadjuk az addig elkészült legjobb állapotot
-      }
-
-      // Kiszámoljuk a következő pozíciót a mátrixban
-      const nextC = (c + 1) % maxCards;
-      const nextS = nextC === 0 ? s + 1 : s;
-
-      // 1. OPCIÓ: Megpróbáljuk betenni az 's' szimbólumot a 'c' kártyára
-      if (isValidPlacement(s, c)) {
-        matrix[s][c] = 1;
-        cardSizes[c]++;
-        symbolCounts[s]++;
-
-        if (solveMatrix(nextS, nextC)) return true;
-
-        // Visszalépés (Backtrack)
-        matrix[s][c] = 0;
-        cardSizes[c]--;
-        symbolCounts[s]--;
-      }
-
-      // 2. OPCIÓ: Kihagyjuk az 's' szimbólumot a 'c' kártyáról (0-n hagyjuk)
-      // Csak akkor hagyhatjuk ki, ha a hátralévő kártyák száma elegendő ahhoz, hogy a szimbólum elérje az 'r' darabszámot
-      const remainingCards = maxCards - 1 - c;
-      if (symbolCounts[s] + remainingCards >= r) {
-        if (solveMatrix(nextS, nextC)) return true;
-      }
-
-      return false;
-    };
-
-    // Algoritmus indítása a 0. szimbólumtól és 0. kártyától
-    solveMatrix(0, 0);
-
-    // Az incidencia mátrixból visszaalakítjuk a kártyák listájává (számtömbökké)
-    const deck: number[][] = Array.from({ length: maxCards }, () => []);
-    for (let c = 0; c < maxCards; c++) {
-      for (let s = 0; s < totalImages; s++) {
-        if (matrix[s][c] === 1) {
-          deck[c].push(s);
-        }
-      }
-    }
-
-    // Csak azokat a kártyákat adjuk vissza, amik teljesen megteltek (validak)
-    return deck.filter((card) => card.length === k);
-  }
-
   private mapToVisualDeck(numericDeck: number[][]): PlacedItem[][] {
-    console.log('Nyers számok érkeztek a Workertől:', numericDeck); // <-- TESZT LOG 1
-    
-    if (!numericDeck || numericDeck.length === 0) {
-      console.warn('A kapott pakli tömb teljesen üres!');
-      return [];
-    }
+    if (!numericDeck || numericDeck.length === 0) return [];
 
-    const visualDeck = numericDeck.map((card) => {
+    return numericDeck.map((card) => {
       const count = card.length;
       const placed: PlacedItem[] = [];
       if (count === 0) return [];
@@ -322,34 +158,25 @@ export class AppComponent implements OnInit {
 
       return placed;
     });
-
-    console.log('Legenerált vizuális pakli koordinátákkal:', visualDeck); // <-- TESZT LOG 2
-    return visualDeck;
   }
 
-
-  /**
-   * Kézi szerkesztés mentése: Amikor a popupból visszajön a módosított kártya,
-   * itt frissítjük a központi tömb adott indexű elemét.
-   */
   public updateCardInDeck(cardIndex: number, updatedItems: PlacedItem[]): void {
     this.generatedDeck[cardIndex] = updatedItems;
+    // Referencia frissítés a szülő szintjén is a biztonság kedvéért
+    this.generatedDeck = [...this.generatedDeck];
     console.log(`Kártya elmentve a központi tömbben! Index: ${cardIndex}`);
   }
 
-  /**
-   * Egyedi újrakeverés: Ha a kártyán a keverés gombra nyomnak,
-   * az eredeti számok alapján újraszámoljuk a pozíciókat csak annak az egy kártyának.
-   */
   public shuffleSingleCard(cardIndex: number): void {
     const originalCardNumbers = this.rawDeck[cardIndex];
     if (originalCardNumbers) {
+      // FIX: Csak az első kártyatömböt [0] emeljük ki, mivel a mapToVisualDeck listát ad vissza
       const singleCardDeck = this.mapToVisualDeck([originalCardNumbers]);
       this.generatedDeck[cardIndex] = singleCardDeck[0];
+      this.generatedDeck = [...this.generatedDeck]; // Triggeli a Change Detection-t
     }
   }
 
-  // Interaktív kártyakiválasztás kezelése
   selectCard(index: number): void {
     if (this.selectedCard1 === index) {
       this.selectedCard1 = null;
@@ -379,6 +206,8 @@ export class AppComponent implements OnInit {
 
     const card1Symbols = this.rawDeck[this.selectedCard1];
     const card2Symbols = this.rawDeck[this.selectedCard2];
+
+    if (!card1Symbols || !card2Symbols) return;
 
     const commonNumbers = card1Symbols.filter((num) =>
       card2Symbols.includes(num),
