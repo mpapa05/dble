@@ -26,3 +26,23 @@
   overflow: hidden;
 }
 
+.editable-item {
+  cursor: grab; /* Mutassa a tenyér ikont, hogy megfogható */
+  
+  &:active {
+    cursor: grabbing; /* Ha épp húzza a felhasználó */
+  }
+}
+
+/* Letiltjuk a transition-t, amíg az ember húzza az egérrel, különben "késne" az elem az egér mögött */
+.cdk-drag-dragging {
+  transition: none !important;
+  z-index: 1000 !important;
+}
+
+/* A kijelölt elem picit kapjon komolyabb fókuszt */
+.selected-item {
+  outline: 2px solid #3b82f6 !important;
+  background: rgba(59, 130, 246, 0.15);
+  z-index: 99;
+}
