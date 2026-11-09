@@ -217,6 +217,10 @@ export class AppComponent implements OnInit, OnDestroy {
     );
   }
 
+  trackByIndex(index: number): number {
+    return index;
+  }
+
   resetSelection(): void {
     this.selectedCard1 = null;
     this.selectedCard2 = null;
