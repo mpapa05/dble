@@ -23,9 +23,12 @@
               [cdkDragBoundary]="cardBoundary"
               (cdkDragEnded)="onDragEnded($event, i)"
             >
-              <img *ngIf="item.isImage" [src]="item.text" alt="symbol" class="symbol-img" />
-              <span *ngIf="!item.isImage">{{ item.text }}</span>
-            </div>
+            <!-- HA KÉP: Csak az <img> tag jelenjen meg -->
+            <img *ngIf="item.isImage" [src]="item.text" alt="symbol" class="symbol-img" />
+
+            <!-- JAVÍTÁS - HA SZÖVEG/EMOJI: Csak ekkor jelenjen meg a <span>, különben kiírja a Base64-et! -->
+            <span *ngIf="!item.isImage">{{ item.text }}</span>
+          </div>
           </div>
         </div>
         <p class="hint-text">Fogd meg az egereddel az emojikat a mozgatáshoz!<br>Kattintás után a jobb oldalon forgathatod és méretezheted őket.</p>
