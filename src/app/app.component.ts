@@ -226,7 +226,10 @@ public onImageUpload(event: Event, modeStr: string): void {
   const input = event.target as HTMLInputElement;
   if (!input.files || input.files.length === 0) return;
 
-  const files = Array.from(input.files);
+  // Típusbiztonság visszaállítása a metóduson belül
+  const mode: 'append' | 'replace' = modeStr === 'replace' ? 'replace' : 'append';
+
+   const files = Array.from(input.files);
   const base64Promises = files.map(file => {
     return new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
@@ -236,25 +239,19 @@ public onImageUpload(event: Event, modeStr: string): void {
     });
   });
 
-  // Miután az összes képet beolvastuk Base64-ként
   Promise.all(base64Promises).then((base64Images) => {
     if (mode === 'replace') {
-      // Teljesen lecseréljük a listát a feltöltött képekre
       this.emojiList = base64Images;
     } else {
-      // Hozzáadjuk a meglévő emojik elé/mögé
       this.emojiList = [...base64Images, ...this.emojiList];
     }
 
-    // Újraszámoljuk a limiteket az új listaméret alapján
     this.calculateLimits();
     
-    // Opcionális: Ha van már legenerált pakli, az újrakeveréssel azonnal láthatóvá válnak a képek
     if (this.generatedDeck.length > 0) {
       this.startGeneration();
     }
     
-    // Reseteljük az inputot, hogy ugyanazt a fájlt újra fel lehessen tölteni ha kell
     input.value = '';
     alert(`Sikeresen betöltve ${base64Images.length} db saját kép!`);
   }).catch(err => {
