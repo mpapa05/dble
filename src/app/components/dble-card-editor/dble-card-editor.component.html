@@ -41,13 +41,13 @@
         <div *ngIf="selectedItemIndex !== null" class="sliders">
           <div class="control-group">
             <label>Méret (Nagyítás): <span>{{currentScale}}x</span></label>
-            <input type="range" min="0.4" max="2.5" step="0.05" 
+            <input type="range" min="0.4" max="2.5" step="0.05" (click)="$event.stopPropagation()" 
                    [(ngModel)]="currentScale" (input)="updateItemTransform()" />
           </div>
 
           <div class="control-group">
             <label>Forgatás: <span>{{currentRotation}}°</span></label>
-            <input type="range" min="0" max="360" step="5" 
+            <input type="range" min="0" max="360" step="5" (click)="$event.stopPropagation()"
                    [(ngModel)]="currentRotation" (input)="updateItemTransform()" />
           </div>
         </div>
