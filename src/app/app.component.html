@@ -373,3 +373,35 @@
   </app-dble-card>
   </div>
 </div>
+
+<!-- ÚJ: Egyedi képfeltöltő zóna -->
+<div style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px dashed #cbd5e0; display: flex; flex-direction: column; gap: 8px;">
+  <label style="font-weight: 600; color: #475569; font-size: 13px;">🎨 Saját szimbólumok feltöltése (PNG, JPG):</label>
+  
+  <div style="display: flex; gap: 8px; align-items: center;">
+    <!-- Rejtett natív input a szép kinézetért -->
+    <input 
+      type="file" 
+      #fileInput 
+      multiple 
+      accept="image/*" 
+      style="display: none;" 
+      (change)="onImageUpload($event, uploadMode.value)" 
+    />
+    
+    <!-- Mód választó legördülő -->
+    <select #uploadMode style="padding: 6px; border-radius: 6px; border: 1px solid #cbd5e0; font-size: 13px; background: white;">
+      <option value="append">➕ Emojikhoz hozzáadás</option>
+      <option value="replace">🔄 Teljes csere (Csak a képek)</option>
+    </select>
+
+    <!-- Aktiváló gomb -->
+    <button 
+      type="button" 
+      (click)="fileInput.click()"
+      style="background: #4f46e5; color: white; padding: 6px 12px; border-radius: 6px; border: none; font-size: 13px; font-weight: bold; cursor: pointer;"
+    >
+      📁 Fájlok kiválasztása
+    </button>
+  </div>
+</div>

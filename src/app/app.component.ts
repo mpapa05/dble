@@ -146,10 +146,14 @@ export class AppComponent implements OnInit, OnDestroy {
         const top = 50 + r * Math.sin(angle) * 50;
         const rotation = Math.floor(Math.random() * 360);
         const scale = parseFloat((Math.random() * (1.3 - 0.75) + 0.75).toFixed(2));
+        const itemValue = this.emojiList[num] || `[${num}]`;
+        // Megnézzük, hogy a kapott érték egy Base64 kép-e
+        const isUploadedImage = itemValue.startsWith('data:image');
+        
 
         placed.push({
           text: this.emojiList[num] || `[${num}]`,
-          isImage: false,
+          isImage: isUploadedImage, // <-- Dinamikusan true lesz, ha kép!
           top: `${top.toFixed(2)}%`,
           left: `${left.toFixed(2)}%`,
           transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${scale})`,
@@ -216,6 +220,48 @@ export class AppComponent implements OnInit, OnDestroy {
       this.emojiList[num] ? this.emojiList[num] : `[${num}]`,
     );
   }
+
+  // Ezt a metódust add hozzá az AppComponent osztályhoz:
+public onImageUpload(event: Event, mode: 'append' | 'replace'): void {
+  const input = event.target as HTMLInputElement;
+  if (!input.files || input.files.length === 0) return;
+
+  const files = Array.from(input.files);
+  const base64Promises = files.map(file => {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+  });
+
+  // Miután az összes képet beolvastuk Base64-ként
+  Promise.all(base64Promises).then((base64Images) => {
+    if (mode === 'replace') {
+      // Teljesen lecseréljük a listát a feltöltött képekre
+      this.emojiList = base64Images;
+    } else {
+      // Hozzáadjuk a meglévő emojik elé/mögé
+      this.emojiList = [...base64Images, ...this.emojiList];
+    }
+
+    // Újraszámoljuk a limiteket az új listaméret alapján
+    this.calculateLimits();
+    
+    // Opcionális: Ha van már legenerált pakli, az újrakeveréssel azonnal láthatóvá válnak a képek
+    if (this.generatedDeck.length > 0) {
+      this.startGeneration();
+    }
+    
+    // Reseteljük az inputot, hogy ugyanazt a fájlt újra fel lehessen tölteni ha kell
+    input.value = '';
+    alert(`Sikeresen betöltve ${base64Images.length} db saját kép!`);
+  }).catch(err => {
+    console.error('Hiba a képek beolvasása közben:', err);
+    alert('Néhány képet nem sikerült beolvasni.');
+  });
+}
 
   trackByIndex(index: number): number {
     return index;
