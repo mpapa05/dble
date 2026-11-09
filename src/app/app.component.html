@@ -339,7 +339,7 @@
       "
     >
       <div
-        *ngFor="let card of generatedDeck; let idx = index"
+        *ngFor="let card of generatedDeck; let idx = index; trackBy: trackByIndex"
         (click)="selectCard(idx)"
         [class.selected-card]="selectedCard1 === idx || selectedCard2 === idx"
         class="card-wrapper"
@@ -361,7 +361,7 @@
 
 <!-- TISZTA NYOMTATÁSI NÉZET (Kizárólag nyomtatási üzemmódban válik láthatóvá a CSS-ből) -->
 <div class="printable-area">
-  <div *ngFor="let card of generatedDeck; let jdx = index" class="print-card">
+  <div *ngFor="let card of generatedDeck; let jdx = index; trackBy: trackByIndex" class="print-card">
     <app-dble-card 
     [placedItems]="card" 
     [isPrintMode]="true"
