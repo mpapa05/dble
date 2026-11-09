@@ -23,12 +23,12 @@
               [cdkDragBoundary]="cardBoundary"
               (cdkDragEnded)="onDragEnded($event, i)"
             >
-            <!-- HA KÉP: Csak az <img> tag jelenjen meg -->
-            <img *ngIf="item.isImage" [src]="item.text" alt="symbol" class="symbol-img" />
+              <!-- HA KÉP: Csak az <img> tag jelenjen meg -->
+              <img *ngIf="item.isImage" [src]="item.text" alt="symbol" class="symbol-img" />
 
-            <!-- JAVÍTÁS - HA SZÖVEG/EMOJI: Csak ekkor jelenjen meg a <span>, különben kiírja a Base64-et! -->
-            <span *ngIf="!item.isImage">{{ item.text }}</span>
-          </div>
+              <!-- JAVÍTÁS - HA SZÖVEG/EMOJI: Csak ekkor jelenjen meg a <span>, különben kiírja a Base64-et! -->
+              <span *ngIf="!item.isImage">{{ item.text }}</span>
+            </div>
           </div>
         </div>
         <p class="hint-text">Fogd meg az egereddel az emojikat a mozgatáshoz!<br>Kattintás után a jobb oldalon forgathatod és méretezheted őket.</p>
@@ -37,9 +37,16 @@
       <!-- JOBB OLDAL: Csúszkák a mérethez és forgatáshoz -->
       <div class="controls-container">
         <h4 *ngIf="selectedItemIndex === null">Nincs elem kijelölve</h4>
-        <h4 *ngIf="selectedItemIndex !== null">
-          Kijelölve: {{ placedItems[selectedItemIndex].text }}
-        </h4>
+        
+        <!-- JAVÍTÁS: Nem írjuk ki a nyers text-et, ha az egy óriási Base64 kép kód -->
+        <div *ngIf="selectedItemIndex !== null">
+          <h4 *ngIf="!placedItems[selectedItemIndex].isImage">
+            Kijelölve: {{ placedItems[selectedItemIndex].text }}
+          </h4>
+          <h4 *ngIf="placedItems[selectedItemIndex].isImage" style="display: flex; align-items: center; gap: 8px;">
+            Kijelölve: <img [src]="placedItems[selectedItemIndex].text" style="width: 30px; height: 30px; object-fit: contain;" alt="preview" /> (Saját kép)
+          </h4>
+        </div>
 
         <div *ngIf="selectedItemIndex !== null" class="sliders">
           <div class="control-group">
