@@ -14,6 +14,7 @@ export class DbleCardComponent implements OnChanges {
   // A szülőtől kapott kész pozíciók
   @Input() placedItems: PlacedItem[] = [];
   @Input() highlightedItems: string[] = [];
+  @Input() isPrintMode = false;
 
   @Output() cardChanged = new EventEmitter<PlacedItem[]>();
   @Output() requestShuffle = new EventEmitter<void>();

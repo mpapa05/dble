@@ -24,7 +24,7 @@
 
 <!-- FIX: A gomb teljesen kikerült a körből, így nincs többé takarásban -->
 <!-- AKCIÓGOMBOK KONTÉNERE (Egy vonalban, nyomtatáskor rejtve) -->
-<div class="non-printable" style="text-align: center; margin-top: 12px; position: relative; z-index: 30;">
+<div *ngIf="!isPrintMode" class="non-printable" style="text-align: center; margin-top: 12px; position: relative; z-index: 30;">
   <div style="display: inline-flex; gap: 8px; justify-content: center; align-items: center;">
     
     <!-- KEVERÉS GOMB -->

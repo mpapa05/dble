@@ -364,6 +364,7 @@
   <div *ngFor="let card of generatedDeck; let jdx = index" class="print-card">
     <app-dble-card 
     [placedItems]="card" 
+    [isPrintMode]="true"
     [highlightedItems]="matchingEmojis"
     (cardChanged)="updateCardInDeck(jdx, $event)"
     (requestShuffle)="shuffleSingleCard(jdx)"
