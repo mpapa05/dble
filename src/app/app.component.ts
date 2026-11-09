@@ -222,7 +222,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   // Ezt a metódust add hozzá az AppComponent osztályhoz:
-public onImageUpload(event: Event, mode: 'append' | 'replace'): void {
+public onImageUpload(event: Event, modeStr: string): void {
   const input = event.target as HTMLInputElement;
   if (!input.files || input.files.length === 0) return;
 

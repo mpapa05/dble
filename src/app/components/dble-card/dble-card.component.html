@@ -1,7 +1,5 @@
 <!-- A kör alakú kártya, amiben az emojik laknak -->
-<div 
-  class="dobble-card"
-  >
+<div class="dobble-card">
   <div class="card-area">
     <div
       *ngFor="let item of placedItems"
@@ -11,13 +9,15 @@
       [class.highlighted]="highlightedItems && highlightedItems.includes(item.text)"
       class="dobble-item"
     >
+      <!-- HA KÉP: Csak az <img> jelenik meg -->
       <img
         *ngIf="item.isImage"
         [src]="item.text"
         alt="symbol"
         class="symbol-img"
       />
-      <span>{{ item.text }}</span>
+      <!-- JAVÍTÁS - HA SZÖVEG/EMOJI: Csak ekkor jelenik meg a <span> -->
+      <span *ngIf="!item.isImage">{{ item.text }}</span>
     </div>
   </div>
 </div>
