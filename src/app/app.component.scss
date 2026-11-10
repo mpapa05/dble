@@ -144,29 +144,29 @@
 
   /* KRITIKUS JAVÍTÁS: Mivel a gyermekben ez 42px, a nyomtatásban kötelező a duplájára, 
      84px-re emelni, különben az emojik nem tudnak kitágulni a kártya szélei felé! */
-  .print-card ::ng-deep .dobble-item {
-    position: absolute !important;
-    width: 84px !important;   /* 42px helyett pontosan 84px */
-    height: 84px !important;  /* 42px helyett pontosan 84px */
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
+  // .print-card ::ng-deep .dobble-item {
+  //   position: absolute !important;
+  //   width: 84px !important;   /* 42px helyett pontosan 84px */
+  //   height: 84px !important;  /* 42px helyett pontosan 84px */
+  //   display: flex !important;
+  //   align-items: center !important;
+  //   justify-content: center !important;
+  // }
 
   /* JAVÍTÁS: Az emojik betűméretét is arányosan megduplázzuk (26px-ről 52px-re) */
-  .print-card ::ng-deep .dobble-item span {
-    font-size: 52px !important;  /* Gyönyörű, hatalmas gyári méretű emojik */
-    line-height: 1 !important;
-    display: block !important;
-  }
+  // .print-card ::ng-deep .dobble-item span {
+  //   font-size: 52px !important;  /* Gyönyörű, hatalmas gyári méretű emojik */
+  //   line-height: 1 !important;
+  //   display: block !important;
+  // }
 
   /* JAVÍTÁS: A feltöltött egyedi képek (Base64) méretét is arányosan igazítjuk a 84px-es kerethez */
-  .print-card ::ng-deep .symbol-img {
-    width: 100% !important;     /* Kitölti a megnövelt 84px-es hordozót */
-    height: 100% !important;
-    object-fit: contain !important;
-    display: block !important;
-  }
+  // .print-card ::ng-deep .symbol-img {
+  //   width: 100% !important;     /* Kitölti a megnövelt 84px-es hordozót */
+  //   height: 100% !important;
+  //   object-fit: contain !important;
+  //   display: block !important;
+  // }
 
   /* Ha a szülő kártyában van akciógomb, azt elrejtjük */
   .print-card ::ng-deep .non-printable {
