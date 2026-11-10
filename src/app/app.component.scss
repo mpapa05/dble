@@ -77,7 +77,7 @@
     box-sizing: border-box !important;
   }
 
-  /* Margók beállítása, hogy a 320px-es kártyák kényelmesen elférjenek egymás mellett */
+  /* Margók finomhangolása a 2x3-as gyári elrendezéshez */
   @page {
     margin: 12mm 15mm;
   }
@@ -118,14 +118,13 @@
     }
   }
 
-  /* JAVÍTÁS: A kártyát pixel alapon kényszerítjük a 8.5 cm-nek megfelelő 320px-es méretre.
-     Ez áttöri a gyermek komponens belső fix pixel korlátait! */
+  /* JAVÍTÁS: A kártyát átállítjuk a gyári 8,5 cm-nek megfelelő 320px-es méretre */
   .print-card ::ng-deep .dobble-card {
     width: 320px !important;    
     height: 320px !important;   
     max-width: 320px !important;
     max-height: 320px !important;
-    border: 2.5px solid #000000 !important; /* Szép, tiszta fekete gyári vágóél */
+    border: 2.5px solid #000000 !important; /* Tiszta fekete gyári vágóél */
     border-radius: 50% !important;
     background: white !important;
     box-shadow: none !important;
@@ -134,8 +133,7 @@
     transform: none !important;
   }
 
-  /* JAVÍTÁS: A belső elrendezési területet is rákényszerítjük a teljes 320px-es méretre,
-     így a százalékos pozíciók automatikusan kitolják az emojikat a kártya széléig! */
+  /* JAVÍTÁS: A belső százalékos pozicionálási területnek is pontosan ki kell töltenie a 320px-t */
   .print-card ::ng-deep .card-area {
     width: 320px !important;
     height: 320px !important;
@@ -144,28 +142,30 @@
     position: relative !important;
   }
 
-  /* Nem adunk a hordozónak méretet, hogy a translate(-50%, -50%) tökéletesen működjön */
+  /* KRITIKUS JAVÍTÁS: Mivel a gyermekben ez 42px, a nyomtatásban kötelező a duplájára, 
+     84px-re emelni, különben az emojik nem tudnak kitágulni a kártya szélei felé! */
   .print-card ::ng-deep .dobble-item {
     position: absolute !important;
-    width: auto !important;
-    height: auto !important;
-    display: inline-block !important;
+    width: 84px !important;   /* 42px helyett pontosan 84px */
+    height: 84px !important;  /* 42px helyett pontosan 84px */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
-  /* JAVÍTÁS: Az emojik (span) betűméretét a 320px-es átmérőhöz igazítva jelentősen megemeljük,
-     hogy pontosan lefedjék a képernyőn megszokott kitöltöttséget */
+  /* JAVÍTÁS: Az emojik betűméretét is arányosan megduplázzuk (26px-ről 52px-re) */
   .print-card ::ng-deep .dobble-item span {
-    font-size: 52px !important;  /* Hatalmas, gyári arányú emojik a papíron */
+    font-size: 52px !important;  /* Gyönyörű, hatalmas gyári méretű emojik */
     line-height: 1 !important;
-    display: inline-block !important;
+    display: block !important;
   }
 
-  /* JAVÍTÁS: A feltöltött egyedi képek méretét is a 320px-es körhöz arányosítjuk */
+  /* JAVÍTÁS: A feltöltött egyedi képek (Base64) méretét is arányosan igazítjuk a 84px-es kerethez */
   .print-card ::ng-deep .symbol-img {
-    width: 58px !important;      /* Arányos, nagy képek a papíron */
-    height: 58px !important;
+    width: 100% !important;     /* Kitölti a megnövelt 84px-es hordozót */
+    height: 100% !important;
     object-fit: contain !important;
-    display: inline-block !important;
+    display: block !important;
   }
 
   /* Ha a szülő kártyában van akciógomb, azt elrejtjük */
@@ -173,6 +173,7 @@
     display: none !important;
   }
 }
+
 
 @keyframes spin {
   0% {
