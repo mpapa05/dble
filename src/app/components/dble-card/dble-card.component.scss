@@ -1,12 +1,12 @@
 :host {
   display: inline-block;
 }
-/* JAVÍTÁS: A kártya alapméretét CSS változóhoz kötjük, ami képernyőn 160px, de nyomtatáskor 320px lesz! */
+
 .dobble-card {
-  width: var(--card-size, 160px) !important;
-  height: var(--card-size, 160px) !important;
-  max-width: var(--card-size, 160px) !important;
-  max-height: var(--card-size, 160px) !important;
+  width: 160px !important;
+  height: 160px !important;
+  max-width: 160px !important;
+  max-height: 160px !important;
   border: 3px solid #22c55e; 
   border-radius: 50% !important;
   background-color: #ffffff;
@@ -21,18 +21,17 @@
   height: 100% !important;
 }
 
-/* JAVÍTÁS: Az elemek méretét a kártya méretéhez viszonyítva százalékban adjuk meg! 
-   Így ha a kártya megnő, az elemek és a betűméret is hajszálpontosan vele együtt nő! */
 .dobble-item {
   position: absolute !important;
-  width: 26.25% !important;  /* 42px / 160px = 26.25% */
-  height: 26.25% !important; 
+  font-size: 26px !important; 
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  width: 42px !important;   /* Fix képernyős méretek */
+  height: 42px !important;  
   
   span {
-    font-size: var(--emoji-size, 26px) !important;
+    font-size: 26px !important;
     line-height: 1 !important;
     display: inline-block !important;
   }
@@ -54,22 +53,4 @@
 @keyframes pulse {
   0%, 100% { transform: scale(1.4); }
   50% { transform: scale(1.7); }
-}
-
-/* --- NYOMTATÁSI BLOKK A KÁRTYA SAJÁT SCSS-ÉBEN --- */
-@media print {
-  .non-printable,
-  button {
-    display: none !important;
-  }
-
-  /* Nyomtatáskor átírjuk a CSS változókat: a kártya 320px (8.5cm), az emoji 52px lesz.
-     Mivel a struktúra és a százalékok azonosak maradnak, a pozíciók elcsúszása fizikailag LEHETETLEN! */
-  .dobble-card {
-    --card-size: 320px;
-    --emoji-size: 52px;
-    border: 2px solid #000000 !important; /* Gyári fekete vágóél */
-    box-shadow: none !important;
-    background: white !important;
-  }
 }

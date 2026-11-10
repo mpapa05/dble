@@ -70,56 +70,6 @@
   display: none;
 }
 
-/* --- NYOMTATÁSI BEÁLLÍTÁSOK az app.component.scss-ben --- */
-@media print {
-  * {
-    box-sizing: border-box !important;
-  }
-
-  @page {
-    margin: 15mm 15mm;
-  }
-
-  .non-printable,
-  .non-printable-card {
-    display: none !important;
-  }
-
-  body, html {
-    background: white !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  /* Stabil, középre igazított 2 oszlopos elrendezés */
-  .printable-area {
-    display: grid !important;
-    grid-template-columns: repeat(2, 324px) !important; 
-    justify-content: center !important; 
-    row-gap: 35px !important; 
-    column-gap: 30px !important; 
-    padding: 0 !important;
-    width: 100% !important;
-  }
-
-  .print-card {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 324px !important; 
-    height: 324px !important;
-    page-break-inside: avoid;
-    break-inside: avoid;
-    margin: 0 auto !important;
-
-    &:nth-child(6n) {
-      page-break-after: always !important;
-      break-after: page !important;
-    }
-  }
-}
-
-
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -140,4 +90,97 @@
 }
 .match-pulse {
   animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* --- NYOMTATÁSI BEÁLLÍTÁSOK az app.component.scss-ben --- */
+@media print {
+  * {
+    box-sizing: border-box !important;
+  }
+
+  /* Gyári 2x3-as margó az A4-es laphoz */
+  @page {
+    margin: 15mm 15mm;
+  }
+
+  .non-printable,
+  .non-printable-card {
+    display: none !important;
+  }
+
+  body, html {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Stabil, középre igazított CSS Grid tároló a nyomtatáshoz */
+  .printable-area {
+    display: grid !important;
+    /* A két oszlop szélessége pontosan megegyezik a felnagyított gyári kártyák méretével (324px) */
+    grid-template-columns: repeat(2, 324px) !important; 
+    justify-content: center !important; /* Ez húzza be a rácsot a lap matematikai közepére! */
+    row-gap: 35px !important; 
+    column-gap: 30px !important; 
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* A kártyát tartó külső doboznak megadjuk a gyári 324px-es fizikai méretet, 
+     így a pozíciója tökéletesen fix és stabil marad a lapon */
+  .print-card {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 324px !important; 
+    height: 324px !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin: 0 auto !important;
+
+    /* Minden 6. kártya után új lapot nyitunk */
+    &:nth-child(6n) {
+      page-break-after: always !important;
+      break-after: page !important;
+    }
+  }
+
+  /* ATOMBIZTOS JAVÍTÁS: A kártyát az eredeti, hibátlan 160px-es méretén hagyjuk, 
+     hogy az inline transform koordináták tökéletesek maradjanak. 
+     A transform: scale(2.025) segítségével az EGÉSZ KÉSZ GRAFIKÁT nagyítjuk fel a gyári 8,5 cm-re! */
+  .print-card ::ng-deep .dobble-card {
+    width: 160px !important;    
+    height: 160px !important;   
+    max-width: 160px !important;
+    max-height: 160px !important;
+    
+    /* Lecseréljük a zöld keretet a tiszta, vékony fekete gyári vágóélre */
+    border: 1px solid #000000 !important; 
+    border-radius: 50% !important;
+    background: white !important;
+    box-shadow: none !important;
+    position: relative !important;
+    overflow: hidden !important; 
+
+    /* Kikapcsoljuk a torzítást okozó belső kényszerítéseket és zoom-ot */
+    zoom: normal !important;
+    box-sizing: content-box !important;
+
+    /* Grafikailag felskálázzuk a teljes kész elrendezést a gyári 85mm-re (160 * 2.025 = 324px) */
+    transform: scale(2.025) translate3d(0, 0, 0) !important;
+    transform-origin: center center !important;
+  }
+
+  /* Biztosítjuk, hogy a belső tér se kapjon torzítást */
+  .print-card ::ng-deep .card-area {
+    width: 160px !important;
+    height: 160px !important;
+    position: relative !important;
+    box-sizing: content-box !important;
+  }
+
+  /* Elrejtjük az akciógombokat a nyomtatásból */
+  .print-card ::ng-deep .non-printable {
+    display: none !important;
+  }
 }
