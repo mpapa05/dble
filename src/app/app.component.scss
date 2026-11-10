@@ -114,9 +114,7 @@
     }
   }
 
-  /* TRÜKK: Visszaadjuk a kártyának a képernyős fizikai méretét (160px), 
-     majd a CSS zoom / transform segítségével nagyítjuk fel pontosan 85mm-re. 
-     Ez garantálja, hogy a pozíciók ÉS az ikonok méretarányai 100%-ban megegyezzenek a preview-val! */
+  /* Stabil pozíció- és méretarány megtartása */
   .print-card ::ng-deep .dobble-card {
     width: 160px !important;
     height: 160px !important;
@@ -130,9 +128,25 @@
     position: relative !important;
     overflow: hidden !important;
 
-    /* A 160px-et felnagyítjuk a gyári 85mm-re (kb. 2-szeres szorzó) */
+    /* Grafikailag felnagyítjuk a kártyát és a koordinátáit a gyári 85mm-re */
     transform: scale(2.0) !important;
     transform-origin: center center !important;
+  }
+
+  /* JAVÍTÁS: Mivel a scale(2.0) a szövegeket nem nagyítja a nyomtatón, 
+     itt manuálisan kényszerítünk rájuk egy arányos, nagyobb méretet! */
+  .print-card ::ng-deep .dobble-item span {
+    font-size: 32px !important;  /* Megemelt betűméret, hogy kitöltse a megnövekedett kártyát */
+    display: inline-block !important;
+    line-height: 1 !important;
+  }
+
+  /* JAVÍTÁS: A feltöltött egyedi képek (Base64) méretét is arányosan megnöveljük a nyomtatásban */
+  .print-card ::ng-deep .symbol-img {
+    width: 36px !important;     /* Képek felnagyítása a papíron */
+    height: 36px !important;
+    object-fit: contain !important;
+    display: inline-block !important;
   }
 
   /* Ha a szülő kártyában van akciógomb, azt elrejtjük */
@@ -140,6 +154,7 @@
     display: none !important;
   }
 }
+
 
 
 
