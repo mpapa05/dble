@@ -70,17 +70,19 @@
   display: none;
 }
 
-/* --- NYOMTATÁSI BEÁLLÍTÁSOK az app.component.scss-ben --- */
+/* --- NYOMTATÁSI BEÁLLÍTÁSOK (Print CSS) --- */
 @media print {
+  /* Globális méretezési szabály javítása papíron */
   * {
     box-sizing: border-box !important;
   }
 
-  /* Gyári 2x3-as margó az A4-es laphoz */
+  /* Margók finomhangolása a 2x3-as gyári elrendezéshez */
   @page {
     margin: 15mm 15mm;
   }
 
+  /* Minden felesleges UI elemet elrejtünk */
   .non-printable,
   .non-printable-card {
     display: none !important;
@@ -92,65 +94,90 @@
     padding: 0 !important;
   }
 
+  /* Rugalmas CSS Grid a nyomtatási területnek a papíron: Ez garantálja, 
+     hogy semmi ne csúszhasson egymásra! */
   .printable-area {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important; /* Fixen 2 oszlop egymás mellett */
+    row-gap: 35px !important; /* Biztonságos távolság a 3 sor között függőlegesen */
+    column-gap: 20px !important;
     padding: 0 !important;
+    width: 100% !important;
   }
 
-  /* JAVÍTÁS: Visszaállítjuk a stabil 50%-os szélességet, így az A4-es lapon 
-     ismét hajszálpontosan 2 oszlop és 3 sor (6 kártya) fog szerepelni oldalnként! */
+  /* A külső print konténer most csak egy stabil tartó doboz, nem módosítja a kört */
   .print-card {
-    display: inline-flex !important;
+    display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 50% !important; 
-    margin-bottom: 45px !important; /* Biztonságos függőleges távolság a sorok között */
     page-break-inside: avoid;
     break-inside: avoid;
+    width: 100% !important;
 
+    /* Minden 6. kártya után (2 oszlop x 3 sor) tiszta oldaltörést kényszerítünk */
     &:nth-child(6n) {
       page-break-after: always !important;
       break-after: page !important;
     }
   }
 
-  /* ATOMBIZTOS JAVÍTÁS A FÜGGŐLEGES ELCSÚSZÁS ELLEN:
-     Kényszerítjük a kártyát, hogy a nyomtatás pillanatában egy szabályos, torzításmentes 
-     160px × 160px-es kockaként viselkedjen. A transform: scale(2.02) így a függőleges és 
-     vízszintes tengelyt is PONTOSAN UGYANOLYAN ARÁNYBAN nagyítja fel a gyári 8,5 cm-re! */
+  /* JAVÍTÁS: A kártya körét kényszerítjük a hivatalos gyári 8,5 cm-es fizikai méretre */
   .print-card ::ng-deep .dobble-card {
-    width: 160px !important;
-    height: 160px !important;
-    max-width: 160px !important;
-    max-height: 160px !important;
-    
-    border: 1.5px solid #000000 !important; /* Szép, vékony fekete gyári vágóél */
+    width: 85mm !important;    
+    height: 85mm !important;   
+    max-width: 85mm !important;
+    max-height: 85mm !important;
+    border: 2px solid #000000 !important; /* Szép, tiszta fekete gyári vágóél */
     border-radius: 50% !important;
     background: white !important;
     box-shadow: none !important;
     position: relative !important;
-    overflow: hidden !important;
-    
-    /* Megszüntetünk minden külső tényezőt, tiszta grafikai 3D nagyítást alkalmazunk */
-    zoom: normal !important;
-    transform: scale(2.02) translate3d(0, 0, 0) !important;
-    transform-origin: center center !important;
+    overflow: hidden !important; 
+    transform: none !important; /* Töröljük a hibát okozó scale-t */
+    zoom: normal !important;    /* Töröljük a hibát okozó zoom-ot */
   }
 
-  /* Biztosítjuk, hogy a belső komponens elrendezési területe se torzulhasson */
+  /* JAVÍTÁS: A százalékos pozicionálási területnek is milliméterre pontosan ki kell töltenie a 85mm-t */
   .print-card ::ng-deep .card-area {
-    width: 160px !important;
-    height: 160px !important;
+    width: 85mm !important;
+    height: 85mm !important;
+    max-width: 85mm !important;
+    max-height: 85mm !important;
     position: relative !important;
   }
 
-  /* Elrejtjük az akciógombokat a nyomtatásból */
+  /* JAVÍTÁS: A hordozó doboz méretét a kártya átmérőjének százalékában adjuk meg (42px/160px = 26.25%). 
+     Ez a titka annak, hogy a pozíciók tizedmilliméterre pontosan megegyezzenek a preview-val! */
+  .print-card ::ng-deep .dobble-item {
+    position: absolute !important;
+    width: 26.25% !important;  /* Százalékos méretezés a kártyához képest */
+    height: 26.25% !important; 
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* JAVÍTÁS: Az emojik karakterét (span) fixen felerősítjük a gyári mérethez passzoló 52px-re */
+  .print-card ::ng-deep .dobble-item span {
+    font-size: 52px !important;  /* Hatalmas, jól látható gyári emojik */
+    line-height: 1 !important;
+    display: inline-block !important;
+  }
+
+  /* JAVÍTÁS: A feltöltött egyedi képek is 100%-ban kitöltik a megnövelt százalékos hordozót */
+  .print-card ::ng-deep .symbol-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+
+  /* Ha a szülő kártyában van akciógomb, azt elrejtjük */
   .print-card ::ng-deep .non-printable {
     display: none !important;
   }
 }
+
 
 
 @keyframes spin {
