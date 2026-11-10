@@ -103,8 +103,10 @@
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 50% !important; 
-    margin-bottom: 45px !important; /* Távolság a sorok között */
+    width: 48% !important; 
+    margin-bottom: 40px !important; /* Távolság a sorok között */
+    margin-left: 1% !important;
+    margin-right: 1% !important;
     page-break-inside: avoid;
     break-inside: avoid;
 
