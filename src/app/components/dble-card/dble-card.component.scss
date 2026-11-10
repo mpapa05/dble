@@ -54,3 +54,43 @@
   0%, 100% { transform: scale(1.4); }
   50% { transform: scale(1.7); }
 }
+
+/* --- A dble-card.component.scss LEGVÉGÉRE ILLESZD BE --- */
+@media print {
+  /* Minden gombot elrejtünk a kártyáról */
+  .non-printable,
+  button {
+    display: none !important;
+  }
+
+  /* ATOMBIZTOS JAVÍTÁS: A kártyát az eredeti 160px-es méretén hagyjuk, 
+     így a JS koordináták tökéletesek maradnak. A kártya saját stílusában kiadott 
+     zoom: 2.025 viszont az emojik betűméretét, a képeket és a pozíciókat is 
+     EGYSZERRE, organikus módon nagyítja fel a gyári 8,5 cm-re! */
+  .dobble-card {
+    width: 160px !important;
+    height: 160px !important;
+    max-width: 160px !important;
+    max-height: 160px !important;
+    border: 1px solid #000000 !important; /* Szép vékony gyári fekete vágóél */
+    border-radius: 50% !important;
+    background: white !important;
+    box-shadow: none !important;
+    position: relative !important;
+    overflow: hidden !important;
+    transform: none !important;
+
+    /* Visszaállítjuk a content-box-ot, hogy a szegély ne zavarjon be */
+    box-sizing: content-box !important; 
+
+    /* Ez a bűvös sor helyben futtatva az emojikat is hatalmasra növeli: */
+    zoom: 2.025 !important; 
+  }
+
+  .card-area {
+    width: 160px !important;
+    height: 160px !important;
+    position: relative !important;
+    box-sizing: content-box !important;
+  }
+}

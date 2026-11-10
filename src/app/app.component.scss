@@ -98,7 +98,6 @@
     box-sizing: border-box !important;
   }
 
-  /* Gyári 2x3-as margó az A4-es laphoz */
   @page {
     margin: 15mm 15mm;
   }
@@ -114,20 +113,19 @@
     padding: 0 !important;
   }
 
-  /* Stabil, középre igazított CSS Grid tároló a nyomtatáshoz */
+  /* Szabályos, középre igazított 2 oszlopos elrendezés a lapon */
   .printable-area {
     display: grid !important;
-    /* A két oszlop szélessége pontosan megegyezik a felnagyított gyári kártyák méretével (324px) */
-    grid-template-columns: repeat(2, 324px) !important; 
-    justify-content: center !important; /* Ez húzza be a rácsot a lap matematikai közepére! */
+    grid-template-columns: repeat(2, 324px) !important; /* Fixen 324px széles oszlopok */
+    justify-content: center !important; /* Középre húzza a teljes rácsot a lapon */
     row-gap: 35px !important; 
     column-gap: 30px !important; 
     padding: 0 !important;
     width: 100% !important;
   }
 
-  /* A kártyát tartó külső doboznak megadjuk a gyári 324px-es fizikai méretet, 
-     így a pozíciója tökéletesen fix és stabil marad a lapon */
+  /* Biztosítjuk a felnagyított kártya valós helyfoglalását (160px * 2.025 = 324px), 
+     így a kártyák nem fognak egymásra csúszni vagy elbolondulni! */
   .print-card {
     display: flex !important;
     align-items: center !important;
@@ -138,49 +136,16 @@
     break-inside: avoid;
     margin: 0 auto !important;
 
-    /* Minden 6. kártya után új lapot nyitunk */
     &:nth-child(6n) {
       page-break-after: always !important;
       break-after: page !important;
     }
   }
 
-  /* ATOMBIZTOS JAVÍTÁS: A kártyát az eredeti, hibátlan 160px-es méretén hagyjuk, 
-     hogy az inline transform koordináták tökéletesek maradjanak. 
-     A transform: scale(2.025) segítségével az EGÉSZ KÉSZ GRAFIKÁT nagyítjuk fel a gyári 8,5 cm-re! */
-  .print-card ::ng-deep .dobble-card {
-    width: 160px !important;    
-    height: 160px !important;   
-    max-width: 160px !important;
-    max-height: 160px !important;
-    
-    /* Lecseréljük a zöld keretet a tiszta, vékony fekete gyári vágóélre */
-    border: 1px solid #000000 !important; 
-    border-radius: 50% !important;
-    background: white !important;
-    box-shadow: none !important;
-    position: relative !important;
-    overflow: hidden !important; 
-
-    /* Kikapcsoljuk a torzítást okozó belső kényszerítéseket és zoom-ot */
-    zoom: normal !important;
-    box-sizing: content-box !important;
-
-    /* Grafikailag felskálázzuk a teljes kész elrendezést a gyári 85mm-re (160 * 2.025 = 324px) */
-    transform: scale(2.025) translate3d(0, 0, 0) !important;
-    transform-origin: center center !important;
-  }
-
-  /* Biztosítjuk, hogy a belső tér se kapjon torzítást */
-  .print-card ::ng-deep .card-area {
-    width: 160px !important;
-    height: 160px !important;
-    position: relative !important;
-    box-sizing: content-box !important;
-  }
-
-  /* Elrejtjük az akciógombokat a nyomtatásból */
+  /* Az app.component-ből már nem nyúlunk bele erőszakosan a kártyába, 
+     csak letiltjuk az akciógombokat */
   .print-card ::ng-deep .non-printable {
     display: none !important;
   }
 }
+
