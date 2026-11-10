@@ -66,35 +66,40 @@
 
 /* --- NYOMTATÁSI BEÁLLÍTÁSOK a dble-card.component.scss VÉGÉN --- */
 @media print {
-  /* 1. Minden felesleges gombot eltüntetünk */
   .non-printable,
   button {
     display: none !important;
   }
 
-  /* 2. JAVÍTÁS: A kártyát fixen felerőszakoljuk a gyári 8,5 cm-nek megfelelő 320px-re */
+  /* JAVÍTÁS: A külső kört úgy méretezzük, hogy a 2px-es szegéllyel együtt 
+     is tökéletesen magába foglalja a 308px-es belső játékteret */
   .dobble-card {
-    width: 320px !important;
-    height: 320px !important;
-    max-width: 320px !important;
-    max-height: 320px !important;
-    border: 2px solid #000000 !important; /* Szép vékony gyári fekete vágóél */
+    width: 312px !important;    /* 308px belső tér + 2px bal + 2px jobb szegély */
+    height: 312px !important;   
+    max-width: 312px !important;
+    max-height: 312px !important;
+    border: 2px solid #000000 !important; /* Gyári fekete vágóél */
     box-shadow: none !important;
     background: white !important;
     position: relative !important;
     overflow: hidden !important;
+    
+    /* Biztosítjuk, hogy a box-sizing ne tolja el a belső koordinátákat */
+    box-sizing: content-box !important; 
   }
 
-  /* 3. JAVÍTÁS: A belső koordináta-területet is 320px-re növeljük */
+  /* ATOMBIZTOS JAVÍTÁS: A belső területet hajszálpontosan a képernyős hasznos tér (154px) 
+     duplájára, azaz 308px-re kényszerítjük. Így a százalékos pozíciók tizedmilliméterre 
+     pontosan oda kerülnek a papíron is, mint a monitoron! */
   .card-area {
-    width: 320px !important;
-    height: 320px !important;
+    width: 308px !important;
+    height: 308px !important;
+    max-width: 308px !important;
+    max-height: 308px !important;
     position: relative !important;
   }
 
-  /* 4. JAVÍTÁS: Mivel a kártya 160px-ről 320px-re (a duplájára) nőtt, 
-     a hordozó doboz méretét is pontosan a duplájára (42px -> 84px) kell emelnünk!
-     Ez fogja a szimbólumokat visszatolni az eredeti, szélre kiterjedő pozíciójukba! */
+  /* A doboz mérete is a képernyős 42px hajszálpontos duplája (84px) */
   .dobble-item {
     position: absolute !important;
     width: 84px !important;   
@@ -103,8 +108,7 @@
     align-items: center !important;
     justify-content: center !important;
 
-    /* 5. JAVÍTÁS: Az emojik karakterét is pontosan megduplázzuk (26px -> 52px), 
-       hogy a nagyobb felületen is megmaradjon a megszokott kitöltöttség */
+    /* Az emojik mérete is az eredeti 26px pontos duplája (52px) */
     span {
       font-size: 52px !important;  
       line-height: 1 !important;
@@ -112,7 +116,7 @@
     }
   }
 
-  /* 6. JAVÍTÁS: A feltöltött egyedi képek méretét is megduplázzuk, hogy kitöltsék az 84px-es terüket */
+  /* A képek is tökéletesen lekövetik a 84px-es megnövelt hordozót */
   .symbol-img {
     width: 100% !important;
     height: 100% !important;
@@ -120,3 +124,4 @@
     display: block !important;
   }
 }
+
