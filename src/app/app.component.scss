@@ -77,9 +77,9 @@
     box-sizing: border-box !important;
   }
 
-  /* Margók beállítása a böngészőben, hogy az A4-es lapra szépen ráférjenek a kártyák */
+  /* Margók beállítása a böngészőben a 2x3-as rácshoz igazítva */
   @page {
-    margin: 10mm 8mm;
+    margin: 15mm 20mm;
   }
 
   /* Minden felesleges UI elemet elrejtünk */
@@ -95,7 +95,6 @@
     padding: 0 !important;
   }
 
-  /* JAVÍTÁS: Grid helyett tiszta block, hogy a page-break-after szabályt a böngészők tökéletesen végrehajtsák */
   .printable-area {
     display: block !important;
     width: 100% !important;
@@ -103,35 +102,35 @@
     padding: 0 !important;
   }
 
-  /* JAVÍTÁS: inline-flex elrendezés, ahol pontosan 3 kártya fér el egymás mellett (33.33%) */
+  /* JAVÍTÁS: inline-flex elrendezés, ahol pontosan 2 kártya fér el egymás mellett (50%) */
   .print-card {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 33.33% !important;
-    margin-bottom: 30px !important; /* Biztonságos távolság a sorok között */
+    width: 50% !important; /* 2 oszlopos elrendezés */
+    margin-bottom: 40px !important; /* Megfelelő távolság a 3 sor között */
     page-break-inside: avoid;
     break-inside: avoid;
 
-    /* MEGOLDÁS: Minden 9. kártya után (3 sor után) kényszerített, tiszta új oldalt nyitunk */
-    &:nth-child(9n) {
+    /* JAVÍTÁS: Minden 6. kártya után (2 oszlop x 3 sor) új oldalt nyitunk */
+    &:nth-child(6n) {
       page-break-after: always !important;
       break-after: page !important;
     }
   }
 
-  /* A tényleges belső kör alakú kártyát kényszerítjük pontos nyomtatási méretre */
+  /* JAVÍTÁS: A belső kártyát kényszerítjük a hivatalos, gyári 8,5 cm-es méretre */
   .print-card ::ng-deep .dobble-card {
-    width: 170px !important;    /* Optimális, jól kivágható méret */
-    height: 170px !important;   
-    max-width: 170px !important;
-    max-height: 170px !important;
-    border: 2px solid #000000 !important; /* Szép, vékony fekete vágóél a papíron */
+    width: 85mm !important;    /* Pontosan 8.5 cm átmérő */
+    height: 85mm !important;   
+    max-width: 85mm !important;
+    max-height: 85mm !important;
+    border: 2px solid #000000 !important; /* Fekete gyári vágóél */
     border-radius: 50% !important;
     background: white !important;
     box-shadow: none !important;
     position: relative !important;
-    overflow: hidden !important; /* Biztosítja, hogy az emojik ne lógjanak ki a körívből */
+    overflow: hidden !important; /* Levágja a kilógó szimbólumokat */
   }
 
   /* Ha a szülő kártyában van akciógomb konténer, azt a nyomtatásból teljesen kiszedjük */
