@@ -76,8 +76,9 @@
     box-sizing: border-box !important;
   }
 
+  /* Gyári 2x3-as margó az A4-es laphoz */
   @page {
-    margin: 12mm 15mm;
+    margin: 18mm 15mm;
   }
 
   .non-printable,
@@ -98,15 +99,16 @@
     padding: 0 !important;
   }
 
-  /* 2 oszlopos elrendezés a lapon */
+  /* 2 oszlopos elrendezés tiszta helyfoglalással (326px széles és 360px magas hely a lapon) */
   .print-card {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 48% !important; 
-    margin-bottom: 40px !important; /* Távolság a sorok között */
-    margin-left: 1% !important;
-    margin-right: 1% !important;
+    width: 326px !important; 
+    height: 360px !important;
+    margin-left: 20px !important;
+    margin-right: 20px !important;
+    margin-bottom: 20px !important;
     page-break-inside: avoid;
     break-inside: avoid;
 
@@ -114,8 +116,29 @@
       page-break-after: always !important;
       break-after: page !important;
     }
-  }  
+  }
+
+  /* A KÁRTYÁT AZ EREDETI MÉRETÉN HAGYJUK (160px), hogy a TypeScript koordináták 
+     100%-osan stimmeljenek, és a 3D transzformációval nagyítjuk fel a gyári 8,5 cm-re! */
+  .print-card ::ng-deep .dobble-card {
+    width: 160px !important;
+    height: 160px !important;
+    border: 1.5px solid #000000 !important; /* Szép vékony gyári fekete vágóél */
+    box-shadow: none !important;
+    background: white !important;
+    
+    /* Kikapcsoljuk az eltolódást okozó zoom-ot, és bekapcsoljuk az atombiztos 3D scale-t */
+    zoom: normal !important;
+    transform: scale(2.03) translate3d(0, 0, 0) !important;
+    transform-origin: center center !important;
+  }
+
+  /* Elrejtjük az akciógombokat a nyomtatásból */
+  .print-card ::ng-deep .non-printable {
+    display: none !important;
+  }
 }
+
 
 @keyframes spin {
   0% {
