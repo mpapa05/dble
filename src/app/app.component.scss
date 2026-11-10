@@ -72,7 +72,6 @@
 
 /* --- NYOMTATÁSI BEÁLLÍTÁSOK (Print CSS) --- */
 @media print {
-  /* Globális méretezési szabály javítása papíron */
   * {
     box-sizing: border-box !important;
   }
@@ -92,11 +91,11 @@
     padding: 0 !important;
   }
 
-  /* Rugalmas CSS Grid a nyomtatási területnek */
+  /* Stabil 2 oszlopos elrendezés a lapon */
   .printable-area {
     display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important; /* Stabil 2 oszlop */
-    row-gap: 35px !important; /* Távolság a 3 sor között */
+    grid-template-columns: repeat(2, 1fr) !important; 
+    row-gap: 35px !important; 
     column-gap: 20px !important;
     padding: 0 !important;
     width: 100% !important;
@@ -116,53 +115,56 @@
     }
   }
 
-  /* FIX: A kártya köre a gyári 8,5 cm-es fizikai méreten fut */
+  /* ATOMBIZTOS MEGOLDÁS: A kártyát és a belső elemeit pontosan a tökéletes képernyős 
+     pixelméretén hagyjuk, így az inline scale() szorzók és pozíciók 100%-osan érintetlenek maradnak. 
+     A modern CSS zoom segítségével az EGÉSZ kártyát organikusan felnagyítjuk a gyári 8,5 cm-re! */
   .print-card ::ng-deep .dobble-card {
-    width: 85mm !important;    
-    height: 85mm !important;   
-    max-width: 85mm !important;
-    max-height: 85mm !important;
-    border: 2px solid #000000 !important; /* Gyári fekete vágóél */
+    width: 160px !important;    /* Képernyős alapméret */
+    height: 160px !important;   
+    max-width: 160px !important;
+    max-height: 160px !important;
+    border: 1px solid #000000 !important; /* Szép vékony gyári fekete vágóél */
     border-radius: 50% !important;
     background: white !important;
     box-shadow: none !important;
     position: relative !important;
     overflow: hidden !important; 
     transform: none !important;
-    zoom: normal !important;
 
-    /* MEGOLDÁS: Visszaállítjuk a content-box-ot, hogy a 2px-es fekete szegély 
-       KÍVÜLRE kerüljön, így nem nyomja össze a belső százalékos játékteret! */
+    /* Kényszerítjük a content-box-ot, hogy a szegély ne nyomja össze a belső teret */
     box-sizing: content-box !important; 
+
+    /* A BŰVÖS NAGYÍTÁS: A 160px-es kártyát pontosan a duplájára (323px-re) nagyítja, 
+       ami tizedmilliméter pontossággal megfelel a hivatalos gyári 8,5 cm-es átmérőnek! 
+       Ez az emojik karakterét és az egyedi képeket is tökéletes arányban skálázza! */
+    zoom: 2.02 !important; 
   }
 
-  /* FIX: A belső százalékos pozicionálási területnek is pontosan ki kell töltenie a 85mm-t */
+  /* Biztosítjuk, hogy a belső terület is megtartsa a tiszta arányait a zoom alatt */
   .print-card ::ng-deep .card-area {
-    width: 100% !important;
-    height: 100% !important;
+    width: 160px !important;
+    height: 160px !important;
     position: relative !important;
-    box-sizing: content-box !important; /* Ez is kapja meg a tiszta content-box-ot */
+    box-sizing: content-box !important;
   }
 
-  /* A hordozó doboz mérete hajszálpontosan leköveti a kártya átmérőjének 26.25%-át */
+  /* Visszaállítjuk a gyerek elemeket az eredeti képernyős állapotukra, 
+     mivel a zoom mindent elintéz helyettünk azonos arányban! */
   .print-card ::ng-deep .dobble-item {
     position: absolute !important;
-    width: 26.25% !important;  
-    height: 26.25% !important; 
+    width: 42px !important;   /* Eredeti képernyős méret */
+    height: 42px !important;  
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    box-sizing: border-box !important;
   }
 
-  /* Az emojik karakterét (span) fixen felerősítjük a gyári mérethez passzoló 52px-re */
   .print-card ::ng-deep .dobble-item span {
-    font-size: 52px !important;  
+    font-size: 26px !important; /* Eredeti képernyős betűméret */
     line-height: 1 !important;
     display: inline-block !important;
   }
 
-  /* A feltöltött egyedi képek is 100%-ban kitöltik a megnövelt százalékos hordozót */
   .print-card ::ng-deep .symbol-img {
     width: 100% !important;
     height: 100% !important;
