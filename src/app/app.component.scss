@@ -77,9 +77,9 @@
     box-sizing: border-box !important;
   }
 
-  /* Margók beállítása a böngészőben a 2x3-as rácshoz igazítva */
+  /* Margók finomhangolása a böngészőben a 2x3-as rácshoz igazítva, hogy kényelmesen elférjenek egymás mellett */
   @page {
-    margin: 15mm 20mm;
+    margin: 15mm 15mm;
   }
 
   /* Minden felesleges UI elemet elrejtünk */
@@ -102,24 +102,26 @@
     padding: 0 !important;
   }
 
-  /* JAVÍTÁS: inline-flex elrendezés, ahol pontosan 2 kártya fér el egymás mellett (50%) */
+  /* inline-flex elrendezés 2 oszlophoz (48% szélességgel és kis oldalsó margóval, hogy ne érjenek össze a körök) */
   .print-card {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 50% !important; /* 2 oszlopos elrendezés */
-    margin-bottom: 40px !important; /* Megfelelő távolság a 3 sor között */
+    width: 48% !important; /* 50% helyett 48%, hogy legyen rés az oszlopok között */
+    margin-left: 1% !important;
+    margin-right: 1% !important;
+    margin-bottom: 35px !important; /* Távolság a 3 sor között */
     page-break-inside: avoid;
     break-inside: avoid;
 
-    /* JAVÍTÁS: Minden 6. kártya után (2 oszlop x 3 sor) új oldalt nyitunk */
+    /* Minden 6. kártya után (2 oszlop x 3 sor) új oldalt nyitunk */
     &:nth-child(6n) {
       page-break-after: always !important;
       break-after: page !important;
     }
   }
 
-  /* JAVÍTÁS: A belső kártyát kényszerítjük a hivatalos, gyári 8,5 cm-es méretre */
+  /* A belső kártyát kényszerítjük a hivatalos, gyári 8,5 cm-es méretre */
   .print-card ::ng-deep .dobble-card {
     width: 85mm !important;    /* Pontosan 8.5 cm átmérő */
     height: 85mm !important;   
@@ -131,6 +133,25 @@
     box-shadow: none !important;
     position: relative !important;
     overflow: hidden !important; /* Levágja a kilógó szimbólumokat */
+  }
+
+  /* ÚJ JAVÍTÁS: Biztosítjuk, hogy a belső komponens elrendezési területe is 100%-ban kitöltse a 8,5 cm-es kört */
+  .print-card ::ng-deep .card-area {
+    width: 100% !important;
+    height: 100% !important;
+    position: relative !important;
+  }
+
+  /* ÚJ JAVÍTÁS: Megnöveljük a szimbólumok alapvető méretét a nyomtatásban, mivel a kártya is nagyobb lett! */
+  .print-card ::ng-deep .dobble-item {
+    font-size: 34px !important; /* Nagyobb emojik (24px helyett 34px) */
+  }
+
+  /* ÚJ JAVÍTÁS: Megnöveljük a feltöltött egyedi képek méretét is a nyomtatásban */
+  .print-card ::ng-deep .symbol-img {
+    width: 42px !important;  /* Fix nagyobb méret a képeknek a papíron */
+    height: 42px !important;
+    object-fit: contain !important;
   }
 
   /* Ha a szülő kártyában van akciógomb konténer, azt a nyomtatásból teljesen kiszedjük */
@@ -146,12 +167,8 @@
     gap: 18px;
     width: 85%;
   }
-
-  .print-emoji {
-    font-size: 26px;
-    display: inline-block;
-  }
 }
+
 
 @keyframes spin {
   0% {
