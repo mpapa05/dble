@@ -135,22 +135,36 @@
     overflow: hidden !important; /* Levágja a kilógó szimbólumokat */
   }
 
-  /* ÚJ JAVÍTÁS: Biztosítjuk, hogy a belső komponens elrendezési területe is 100%-ban kitöltse a 8,5 cm-es kört */
+  /* Biztosítjuk, hogy a belső komponens elrendezési területe is 100%-ban kitöltse a 8,5 cm-es kört */
   .print-card ::ng-deep .card-area {
     width: 100% !important;
     height: 100% !important;
     position: relative !important;
   }
 
-  /* ÚJ JAVÍTÁS: Megnöveljük a szimbólumok alapvető méretét a nyomtatásban, mivel a kártya is nagyobb lett! */
+  /* JAVÍTÁS: A szimbólumokat tartó div-ek fizikai méretét megemeljük, és flexbox-szal középre igazítjuk a tartalmukat */
   .print-card ::ng-deep .dobble-item {
-    font-size: 34px !important; /* Nagyobb emojik (24px helyett 34px) */
+    position: absolute !important;
+    width: 50px !important;       /* Fix méretű láthatatlan befoglaló doboz a pozicionáláshoz */
+    height: 50px !important;      
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
-  /* ÚJ JAVÍTÁS: Megnöveljük a feltöltött egyedi képek méretét is a nyomtatásban */
+  /* JAVÍTÁS: Kényszerítjük a span-t (emojit) és az img-t (képet), hogy töltsék ki a megnövelt 50px-es terüket */
+  .print-card ::ng-deep .dobble-item span {
+    font-size: 38px !important;  /* Jelentősen nagyobb emojik a gyári kártyához igazítva */
+    line-height: 1 !important;
+    display: block !important;
+  }
+
+  /* JAVÍTÁS: Megnöveljük a feltöltött egyedi képek méretét is a nyomtatásban */
   .print-card ::ng-deep .symbol-img {
-    width: 42px !important;  /* Fix nagyobb méret a képeknek a papíron */
-    height: 42px !important;
+    width: 45px !important;      /* A képek is arányosan kitöltik az 50px-es keretet */
+    height: 45px !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
     object-fit: contain !important;
   }
 
@@ -168,6 +182,7 @@
     width: 85%;
   }
 }
+
 
 
 @keyframes spin {
