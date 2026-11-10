@@ -72,14 +72,17 @@
 
 /* --- NYOMTATÁSI BEÁLLÍTÁSOK (Print CSS) --- */
 @media print {
+  /* Globális méretezés javítása papíron */
   * {
     box-sizing: border-box !important;
   }
 
+  /* Margók beállítása a 2x3-as rácshoz igazítva, hogy kényelmesen elférjenek */
   @page {
     margin: 15mm 15mm;
   }
 
+  /* Minden felesleges UI elemet elrejtünk */
   .non-printable,
   .non-printable-card {
     display: none !important;
@@ -98,53 +101,65 @@
     padding: 0 !important;
   }
 
-  /* 2 oszlopos elrendezés */
+  /* inline-flex elrendezés 2 oszlophoz, fix helyfoglalással */
   .print-card {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 50% !important;
-    margin-bottom: 40px !important;
+    width: 50% !important; /* Pontosan 2 kártya egy sorban */
+    margin-bottom: 35px !important; /* Távolság a 3 sor között */
     page-break-inside: avoid;
     break-inside: avoid;
 
+    /* Minden 6. kártya után (2 oszlop x 3 sor) új oldalt nyitunk */
     &:nth-child(6n) {
       page-break-after: always !important;
       break-after: page !important;
     }
   }
 
-  /* Stabil pozíció- és méretarány megtartása */
+  /* FIX: A kártya körét kényszerítjük a hivatalos gyári 8,5 cm-es méretre */
   .print-card ::ng-deep .dobble-card {
-    width: 160px !important;
-    height: 160px !important;
-    max-width: 160px !important;
-    max-height: 160px !important;
-    
-    border: 1px solid #000000 !important; /* Vékony fekete gyári vágóél */
+    width: 85mm !important;    
+    height: 85mm !important;   
+    max-width: 85mm !important;
+    max-height: 85mm !important;
+    border: 2px solid #000000 !important; /* Fekete gyári vágóél */
     border-radius: 50% !important;
     background: white !important;
     box-shadow: none !important;
     position: relative !important;
-    overflow: hidden !important;
-
-    /* Grafikailag felnagyítjuk a kártyát és a koordinátáit a gyári 85mm-re */
-    transform: scale(2.0) !important;
-    transform-origin: center center !important;
+    overflow: hidden !important; 
+    transform: none !important; /* TÖRÖLJÜK a hibát okozó scale nagyítást */
   }
 
-  /* JAVÍTÁS: Mivel a scale(2.0) a szövegeket nem nagyítja a nyomtatón, 
-     itt manuálisan kényszerítünk rájuk egy arányos, nagyobb méretet! */
-  .print-card ::ng-deep .dobble-item span {
-    font-size: 32px !important;  /* Megemelt betűméret, hogy kitöltse a megnövekedett kártyát */
+  /* FIX: A belső százalékos pozicionálási területnek is pontosan ki kell töltenie a 85mm-t */
+  .print-card ::ng-deep .card-area {
+    width: 85mm !important;
+    height: 85mm !important;
+    position: relative !important;
+  }
+
+  /* FIX: Nem adunk a dobble-itemnek se szélességet, se magasságot, hogy a JS-ből kapott 
+     translate(-50%, -50%) hajszálpontosan középre tudja illeszteni az elemeket! */
+  .print-card ::ng-deep .dobble-item {
+    position: absolute !important;
+    width: auto !important;
+    height: auto !important;
     display: inline-block !important;
-    line-height: 1 !important;
   }
 
-  /* JAVÍTÁS: A feltöltött egyedi képek (Base64) méretét is arányosan megnöveljük a nyomtatásban */
+  /* FIX: Közvetlenül az emojik karakterét (span) növeljük meg a gyári kártyamérethez */
+  .print-card ::ng-deep .dobble-item span {
+    font-size: 44px !important;  /* Szép nagy, gyári méretű emojik a papíron */
+    line-height: 1 !important;
+    display: inline-block !important;
+  }
+
+  /* FIX: A feltöltött egyedi képek (Base64) méretét is arányosan megnöveljük a nyomtatásban */
   .print-card ::ng-deep .symbol-img {
-    width: 36px !important;     /* Képek felnagyítása a papíron */
-    height: 36px !important;
+    width: 48px !important;      /* Szép nagy képek a papíron */
+    height: 48px !important;
     object-fit: contain !important;
     display: inline-block !important;
   }
@@ -154,10 +169,6 @@
     display: none !important;
   }
 }
-
-
-
-
 
 @keyframes spin {
   0% {
