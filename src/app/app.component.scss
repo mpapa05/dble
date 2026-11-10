@@ -72,24 +72,20 @@
 
 /* --- NYOMTATÁSI BEÁLLÍTÁSOK (Print CSS) --- */
 @media print {
-  /* Globális méretezés javítása papíron, hogy a padding és border ne nyomja szét a méretet */
   * {
     box-sizing: border-box !important;
   }
 
-  /* Margók finomhangolása a böngészőben a 2x3-as rácshoz igazítva, hogy kényelmesen elférjenek egymás mellett */
   @page {
     margin: 15mm 15mm;
   }
 
-  /* Minden felesleges UI elemet elrejtünk */
   .non-printable,
   .non-printable-card {
     display: none !important;
   }
 
-  body,
-  html {
+  body, html {
     background: white !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -102,86 +98,49 @@
     padding: 0 !important;
   }
 
-  /* inline-flex elrendezés 2 oszlophoz (48% szélességgel és kis oldalsó margóval, hogy ne érjenek össze a körök) */
+  /* 2 oszlopos elrendezés */
   .print-card {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 48% !important; /* 50% helyett 48%, hogy legyen rés az oszlopok között */
-    margin-left: 1% !important;
-    margin-right: 1% !important;
-    margin-bottom: 35px !important; /* Távolság a 3 sor között */
+    width: 50% !important;
+    margin-bottom: 40px !important;
     page-break-inside: avoid;
     break-inside: avoid;
 
-    /* Minden 6. kártya után (2 oszlop x 3 sor) új oldalt nyitunk */
     &:nth-child(6n) {
       page-break-after: always !important;
       break-after: page !important;
     }
   }
 
-  /* A belső kártyát kényszerítjük a hivatalos, gyári 8,5 cm-es méretre */
+  /* TRÜKK: Visszaadjuk a kártyának a képernyős fizikai méretét (160px), 
+     majd a CSS zoom / transform segítségével nagyítjuk fel pontosan 85mm-re. 
+     Ez garantálja, hogy a pozíciók ÉS az ikonok méretarányai 100%-ban megegyezzenek a preview-val! */
   .print-card ::ng-deep .dobble-card {
-    width: 85mm !important;    /* Pontosan 8.5 cm átmérő */
-    height: 85mm !important;   
-    max-width: 85mm !important;
-    max-height: 85mm !important;
-    border: 2px solid #000000 !important; /* Fekete gyári vágóél */
+    width: 160px !important;
+    height: 160px !important;
+    max-width: 160px !important;
+    max-height: 160px !important;
+    
+    border: 1px solid #000000 !important; /* Vékony fekete gyári vágóél */
     border-radius: 50% !important;
     background: white !important;
     box-shadow: none !important;
     position: relative !important;
-    overflow: hidden !important; /* Levágja a kilógó szimbólumokat */
+    overflow: hidden !important;
+
+    /* A 160px-et felnagyítjuk a gyári 85mm-re (kb. 2-szeres szorzó) */
+    transform: scale(2.0) !important;
+    transform-origin: center center !important;
   }
 
-  /* Biztosítjuk, hogy a belső komponens elrendezési területe is 100%-ban kitöltse a 8,5 cm-es kört */
-  .print-card ::ng-deep .card-area {
-    width: 100% !important;
-    height: 100% !important;
-    position: relative !important;
-  }
-
-  /* JAVÍTÁS: A szimbólumokat tartó div-ek fizikai méretét megemeljük, és flexbox-szal középre igazítjuk a tartalmukat */
-  .print-card ::ng-deep .dobble-item {
-    position: absolute !important;
-    width: 50px !important;       /* Fix méretű láthatatlan befoglaló doboz a pozicionáláshoz */
-    height: 50px !important;      
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  /* JAVÍTÁS: Kényszerítjük a span-t (emojit) és az img-t (képet), hogy töltsék ki a megnövelt 50px-es terüket */
-  .print-card ::ng-deep .dobble-item span {
-    font-size: 38px !important;  /* Jelentősen nagyobb emojik a gyári kártyához igazítva */
-    line-height: 1 !important;
-    display: block !important;
-  }
-
-  /* JAVÍTÁS: Megnöveljük a feltöltött egyedi képek méretét is a nyomtatásban */
-  .print-card ::ng-deep .symbol-img {
-    width: 45px !important;      /* A képek is arányosan kitöltik az 50px-es keretet */
-    height: 45px !important;
-    max-width: 100% !important;
-    max-height: 100% !important;
-    object-fit: contain !important;
-  }
-
-  /* Ha a szülő kártyában van akciógomb konténer, azt a nyomtatásból teljesen kiszedjük */
+  /* Ha a szülő kártyában van akciógomb, azt elrejtjük */
   .print-card ::ng-deep .non-printable {
     display: none !important;
   }
-
-  .print-card-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 18px;
-    width: 85%;
-  }
 }
+
 
 
 
