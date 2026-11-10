@@ -62,7 +62,7 @@
   50% { transform: scale(1.7); }
 }
 
-/* --- VÉGLEGES NYOMTATÁSI BEÁLLÍTÁSOK (A dble-card.component.scss végén) --- */
+/* --- VÉGLEGES NYOMTATÁSI BEÁLLÍTÁSOK (A dble-card.component.scss legvégén) --- */
 @media print {
   .non-printable,
   button {
@@ -81,17 +81,20 @@
     position: relative !important;
     overflow: hidden !important;
 
-    /* A BŰVÖS MEGOLDÁS: Megemeljük a kártya bázis betűméretét a nyomtatáson. 
-       Mivel bent mindent 'em' egységben adtunk meg, a böngésző nyomtatási motorja 
-       az oroszlánt, a dinnyét, azok dobozait és az inline scale() szorzóit is 
-       tizedmilliméter pontosan, azonos arányban fogja felskálázni a papírra! */
+    /* JAVÍTÁS: Kényszerítjük a content-box-ot, hogy a 2px-es fekete szegély 
+       KÍVÜLRE kerüljön, és ne nyomja össze a belső százalékos játékteret! */
+    box-sizing: content-box !important;
+
+    /* Megemeljük a kártya bázis betűméretét a nyomtatáson az organikus növekedéshez */
     font-size: 32px !important; 
   }
 
-  /* A belső tér tökéletesen leköveti a 85mm-es gyári méretet */
+  /* A belső tér így 100%-osan, torzításmentesen leköveti a gyári méretet */
   .card-area {
     width: 100% !important;
     height: 100% !important;
     position: relative !important;
+    box-sizing: border-box !important;
   }
 }
+
