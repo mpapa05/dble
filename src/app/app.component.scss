@@ -72,6 +72,16 @@
 
 /* --- NYOMTATÁSI BEÁLLÍTÁSOK (Print CSS) --- */
 @media print {
+  /* Globális méretezés javítása papíron, hogy a padding és border ne nyomja szét a méretet */
+  * {
+    box-sizing: border-box !important;
+  }
+
+  /* Margók beállítása a böngészőben, hogy az A4-es lapra szépen ráférjenek a kártyák */
+  @page {
+    margin: 10mm 8mm;
+  }
+
   /* Minden felesleges UI elemet elrejtünk */
   .non-printable,
   .non-printable-card {
@@ -81,27 +91,52 @@
   body,
   html {
     background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
+  /* JAVÍTÁS: Grid helyett tiszta block, hogy a page-break-after szabályt a böngészők tökéletesen végrehajtsák */
   .printable-area {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr); /* 3 kártya egy sorban a papíron */
-    gap: 30px;
-    padding: 20px;
-    top: 5px;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
   }
 
+  /* JAVÍTÁS: inline-flex elrendezés, ahol pontosan 3 kártya fér el egymás mellett (33.33%) */
   .print-card {
-    width: 160px;
-    height: 160px;
-    border: 2px solid #000000 !important; /* Fekete vágási él */
-    border-radius: 50% !important;
-    background: white !important;
-    display: flex !important;
+    display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    width: 33.33% !important;
+    margin-bottom: 30px !important; /* Biztonságos távolság a sorok között */
     page-break-inside: avoid;
-    top: 4px;
+    break-inside: avoid;
+
+    /* MEGOLDÁS: Minden 9. kártya után (3 sor után) kényszerített, tiszta új oldalt nyitunk */
+    &:nth-child(9n) {
+      page-break-after: always !important;
+      break-after: page !important;
+    }
+  }
+
+  /* A tényleges belső kör alakú kártyát kényszerítjük pontos nyomtatási méretre */
+  .print-card ::ng-deep .dobble-card {
+    width: 170px !important;    /* Optimális, jól kivágható méret */
+    height: 170px !important;   
+    max-width: 170px !important;
+    max-height: 170px !important;
+    border: 2px solid #000000 !important; /* Szép, vékony fekete vágóél a papíron */
+    border-radius: 50% !important;
+    background: white !important;
+    box-shadow: none !important;
+    position: relative !important;
+    overflow: hidden !important; /* Biztosítja, hogy az emojik ne lógjanak ki a körívből */
+  }
+
+  /* Ha a szülő kártyában van akciógomb konténer, azt a nyomtatásból teljesen kiszedjük */
+  .print-card ::ng-deep .non-printable {
+    display: none !important;
   }
 
   .print-card-grid {
@@ -118,6 +153,7 @@
     display: inline-block;
   }
 }
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
