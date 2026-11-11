@@ -92,14 +92,14 @@
   animation: pulse 1.5s infinite ease-in-out;
 }
 
-/* --- NYOMTATÁSI BEÁLLÍTÁSOK az app.component.scss-ben --- */
 @media print {
   * {
     box-sizing: border-box !important;
   }
 
   @page {
-    margin: 15mm 15mm;
+    size: A4 portrait;
+    margin: 10mm;
   }
 
   .non-printable,
@@ -113,28 +113,26 @@
     padding: 0 !important;
   }
 
-  /* Szabályos, középre igazított 2 oszlopos elrendezés a lapon */
+  /* 2 oszlopos, 3 soros gyári elrendezés (6 kártya / oldal) */
   .printable-area {
     display: grid !important;
-    grid-template-columns: repeat(2, 324px) !important; /* Fixen 324px széles oszlopok */
-    justify-content: center !important; /* Középre húzza a teljes rácsot a lapon */
-    row-gap: 35px !important; 
-    column-gap: 30px !important; 
-    padding: 0 !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    justify-items: center !important;
+    align-items: center !important;
+    row-gap: 12mm !important; /* Pontosan elfér 3 sor egy A4-es lapon */
+    column-gap: 10mm !important;
     width: 100% !important;
   }
 
-  /* Biztosítjuk a felnagyított kártya valós helyfoglalását (160px * 2.025 = 324px), 
-     így a kártyák nem fognak egymásra csúszni vagy elbolondulni! */
+  /* A cella lefoglalja a 85mm-es (8,5 cm) gyári helyet a papíron */
   .print-card {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 324px !important; 
-    height: 324px !important;
+    width: 85mm !important;
+    height: 85mm !important;
     page-break-inside: avoid;
     break-inside: avoid;
-    margin: 0 auto !important;
 
     &:nth-child(6n) {
       page-break-after: always !important;
@@ -142,10 +140,13 @@
     }
   }
 
-  /* Az app.component-ből már nem nyúlunk bele erőszakosan a kártyába, 
-     csak letiltjuk az akciógombokat */
-  .print-card ::ng-deep .non-printable {
-    display: none !important;
+  /* Az eredeti 160px-es kártyát érintetlenül hagyjuk, és egyetlen 
+     vektoros nagyítással (scale) felnagyítjuk a 85mm-es cellába */
+  .print-card ::ng-deep app-dble-card {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transform: scale(2.01) !important; /* 160px * 2.01 ≈ 321px ≈ 85mm */
+    transform-origin: center center !important;
   }
 }
-
